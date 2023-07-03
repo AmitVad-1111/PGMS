@@ -4,6 +4,8 @@ const path = require("path")
 const ejs = require("ejs");
 const dotenv = require("dotenv").config();
 const mongoos = require("mongoose");
+const ErrorHendler = require("./middelware/error-handler");
+const {session, config} = require("./middelware/session-collection");
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -13,6 +15,7 @@ const PORT = process.env.PORT || 3000;
  * =============================================================
  */
 const authRoutes = require("./routes/AuthRoutes");
+
 
 /**
  * App Settings
@@ -26,7 +29,9 @@ app.set("view engine","ejs");
  */
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname,"/public")));
+app.use(session(config));
 app.use(authRoutes);
+app.use(ErrorHendler);
 
 
 
