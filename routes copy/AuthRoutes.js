@@ -1,8 +1,6 @@
 const express = require("express");
 const signupValidator = require("../validation-rules/signup-validator");
 const loginValidator =  require("../validation-rules/login-validator");
-const forgotPassValidator = require("../validation-rules/forgot-pass-validator");
-
 const authRoutes = express.Router();
 const {
     getLogin,
@@ -11,8 +9,7 @@ const {
     postSingup,
     getLogout,
     getLoginSuccess,
-    getForgotPass,
-    postForgotPass
+    getForgotPass
 } = require("../controllers/Auth");
 
 
@@ -22,8 +19,7 @@ authRoutes.get("/singup",getSingup);
 authRoutes.post("/singup",signupValidator(),postSingup);
 authRoutes.get("/logout",getLogout);
 authRoutes.get("/success",getLoginSuccess);
-authRoutes.get("/forgot-pass",getForgotPass);
-authRoutes.post("/forgot-pass",forgotPassValidator(),postForgotPass);
+authRoutes.get("forgot-pass",getForgotPass);
 
 
 module.exports = authRoutes;

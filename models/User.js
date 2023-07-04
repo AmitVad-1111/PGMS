@@ -16,6 +16,12 @@ const UserSchema = new mongoos.Schema({
     user_roll:{
         type:String,
         required:true
+    },
+    password_reset_link:{
+        type: String
+    },
+    password_reset_link_Exp:{
+        type:Date
     }
 });
 

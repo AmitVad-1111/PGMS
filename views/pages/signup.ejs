@@ -4,16 +4,30 @@
 			<div class="wrap-login100">
                 <form class="login100-form validate-form" method="post">
                     <span class="login100-form-title p-b-48">
-                        <img src="/icons/home-colored/home-l.png">
-                        <h2>PGMS</h2>
+						<a href="/">
+							<img src="/icons/home-colored/home-l.png">
+						</a>	
+						<h2>PGMS</h2>
                     </span>
 					<span class="login100-form-title login100-form-title-action p-b-26">
 						Signup
 					</span>
 
-					<% if(successMsg){ %>
-						<div class="success-msg">
-							<span><%= successMsg %></span>
+					<% if(successMessage){ %>
+						<div class="message success-msg">
+							<span><%= successMessage %></span>
+						</div>
+					<% } %>
+
+					<% if(infoMessage){ %>
+						<div class="message info-msg">
+							<span><%= infoMessage %></span>
+						</div>
+					<% } %>
+
+					<% if(errorMessage){ %>
+						<div class="message error-msg">
+							<span><%= errorMessage %></span>
 						</div>
 					<% } %>
 

@@ -1,0 +1,24 @@
+<%- include("../ui-components/auth/header.ejs") %>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+                <form class="login100-form validate-form" method="post">
+                    <span class="login100-form-title p-b-48">
+                        <img src="/icons/home-colored/home-l.png">
+                        <h2>PGMS</h2>
+                    </span>
+					<span class="login100-form-title login100-form-title-action p-b-26">
+						Login Success
+					</span>
+						Hello, <%= user.name %>
+						<a href="/logout">Logout</a>
+					
+				</form>
+			</div>
+		</div>
+	</div>
+	
+
+	<div id="dropDownSelect1"></div>
+	
+<%- include("../ui-components/auth/footer.ejs") %>

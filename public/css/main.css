@@ -543,17 +543,40 @@ iframe {
 }
 
 
-.success-msg {
-  background: #95f0aa;
+.message{
   display: block;
   width: 100%;
   padding: 6px 8px;
   margin-bottom: 10px;
+}
+.success-msg {
   border: 1px solid #27ca47;
+  background: #95f0aa;
 }
 
-.success-msg span {
-  color: #117c0f;
+.info-msg{
+  border: 1px solid #23a0bc;
+  background: #44b8f7;
+}
+
+.error-msg{
+  border: 1px solid #800707;
+  background: #f36868;
+}
+
+.success-msg span, .info-msg span, .error-msg span{
+
   font-size: 14px;
   font-weight: bold;
+}
+
+.success-msg span{
+  color: #117c0f;
+}
+
+.info-msg span{
+  color: #fff;
+}
+.error-msg span{
+  color: #a00f0f;
 }
