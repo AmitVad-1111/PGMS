@@ -10,10 +10,6 @@ const getLogin = (req, res, next) => {
         email: '',
         password: '',
     }
-    // res.render("pages/login", {
-    //     pageTitle: "Login | PGMS",
-    //     errorObj : parseError
-    // });
 
     return renderViews(req, res, "pages/login", {
         pageTitle: "Login | PGMS",
@@ -37,8 +33,6 @@ const postLogin = async (req, res, next) => {
             parseError[err.path] = err.msg
         });
 
-        console.log(parseError);
-
         return renderViews(req, res, "pages/login", {
             pageTitle: "Login | PGMS",
             errorObj: parseError,
@@ -56,7 +50,9 @@ const postLogin = async (req, res, next) => {
                 name: checkUserEmail.fullName,
                 email: checkUserEmail.email
             }
-            return res.redirect("/success")
+            setTimeout(()=>{
+                res.redirect("/success")
+            },0);
         } else {
 
             return renderViews(req, res, "pages/login", {
@@ -106,6 +102,7 @@ const postSingup = async (req, res, next) => {
             return renderViews(req, res, "pages/signup", {
                 pageTitle: "Signup | PGMS",
                 errorObj: parseError,
+                oldValue:req.body
             });
 
         }
@@ -136,8 +133,9 @@ const postSingup = async (req, res, next) => {
 
 const getLogout = async (req, res, next) => {
     let re = await req.session.destroy();
-    console.log(re);
-    res.redirect("/");
+    if(re){
+        res.redirect("/");
+    }
 }
 
 const getLoginSuccess = (req, res, next) => {
@@ -156,32 +154,35 @@ const postForgotPass = async (req, res, next) => {
     const email = req.body.email;
     const error = validationResult(req);
 
-    if(!error.isEmpty()){
+    if (!error.isEmpty()) {
         return renderViews(req, res, "pages/forgot-password", {
             pageTitle: "Forgot Password | PGMS",
             errorMessage: error.array()[0].msg,
-            oldValue : {email}
+            oldValue: { email }
         });
     }
 
-    let isUserExist = await User.findOne({email:email});
-    if(isUserExist){
-        try{
+    let isUserExist = await User.findOne({ email: email });
+    if (isUserExist) {
+        try {
             let randomNumStr = crypto.randomBytes(48);
             let randomData = randomNumStr.toString("hex");
             let url = `/confirm-email/${randomData}`;
-            let user = await User.findOne({email:email});
-            if(!user){
+            let user = await User.findOne({ email: email });
+            if (!user) {
                 const error = new Error("email not found");
                 user.statusCode = 422;
                 throw error;
             }
 
-            user.password_reset_link = url,
-            user.password_reset_link_Exp = Date.now() + 3600000;
+
+            let futureDate = new Date();
+            futureDate.setHours(futureDate.getHours() + 1);
+            user.password_reset_link = randomData,
+                user.password_reset_link_Exp = futureDate;
+
             let upd = await user.save();
-            console.log(upd);
-            if(upd){
+            if (upd) {
                 const options = {
                     from: process.env.APP_EMAIL, // sender address
                     to: email, // receiver email
@@ -199,23 +200,80 @@ const postForgotPass = async (req, res, next) => {
                         
                     `
                 }
-            
-                sendMail(options,(error,info)=>{
-                    console.log(error);
-                    console.log(info);
+
+                sendMail(options, (error, info) => {
+                    if (error) {
+                        if (!err.statusCode) {
+                            err.statusCode = 500;
+                            throw new Error(err);
+                        }
+                    }
+
+                    if (info.messageId) {
+                        return renderViews(req, res, "pages/forgot-password", {
+                            pageTitle: "Forgot Password | PGMS",
+                            successMessage: "Email sent to your email id"
+                        });
+                    }
+
                 });
             }
-        }catch(err){
-            if(!err.statusCode){
+        } catch (err) {
+            if (!err.statusCode) {
                 err.statusCode = 500;
                 throw new Error(err);
             }
         }
     }
 
-    return renderViews(req, res, "pages/forgot-password", {
-        pageTitle: "Forgot Password | PGMS",
-    });
+}
+
+const getPasswordReset = async (req, res, next) => {
+    const token = req.params.token;
+    let getUser = await User.find({ password_reset_link: token, password_reset_link_Exp: { $gt: new Date() } });
+
+    if (getUser.length) {
+        renderViews(req, res, "pages/password-reset", {
+            pageTitle: "Reset Password | PGMS",
+            token: token
+        })
+    }else{
+        renderViews(req, res, "pages/link-expire", {
+            pageTitle: "Link Expire | PGMS",
+        })
+    }
+
+}
+
+const postPasswordReset = async (req, res, next) => {
+    const password = req.body.password;
+    const cpass = req.body.cpass;
+    const token = req.body.token;
+    const errors = validationResult(req);
+    const parseError = [];
+
+    if (!errors.isEmpty()) {
+        const allError = errors.array();
+        allError.forEach(err => {
+            parseError[err.path] = err.msg
+        })
+
+        return renderViews(req, res, "pages/password-reset", {
+            pageTitle: "Reset Password | PGMS",
+            errorObj: parseError,
+            oldValue: req.body
+        });
+    }
+
+    const newPass = await bcrypt.hash(password,12);
+    const updUser = await User.updateOne(
+        {password_reset_link:token},
+        {password:newPass}
+    )
+    
+    if(updUser.acknowledged){
+        res.redirect("/");
+    }
 }
 
 module.exports = {
@@ -226,5 +284,7 @@ module.exports = {
     getLogout,
     getLoginSuccess,
     getForgotPass,
-    postForgotPass
+    postForgotPass,
+    getPasswordReset,
+    postPasswordReset
 }

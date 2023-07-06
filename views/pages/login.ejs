@@ -32,8 +32,8 @@
 					<% } %>
                     
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is: a@b.c">
-						<input class="input100" type="text" name="email" value="<%if(oldValue){%><%= oldValue.email %><%}%>"	>
-						<span class="focus-input100" data-placeholder="Email">
+						<input class="input100" type="text" name="email" placeholder="Email" value="<%if(oldValue){%><%= oldValue.email %><%}%>"	>
+						<span class="focus-input100 frm-error">
 							<% if(errorObj){ %>
 								<%= errorObj.email %>
 							<% }%>
@@ -44,8 +44,8 @@
 						<span class="btn-show-pass">
 							<i class="zmdi zmdi-eye"></i>
 						</span>
-						<input class="input100" type="password" name="password">
-						<span class="focus-input100" data-placeholder="Password">
+						<input class="input100" type="password" name="password" placeholder="Password">
+						<span class="focus-input100 frm-error">
 							<% if(errorObj){ %>
 								<%= errorObj.password %>
 							<% }%>
