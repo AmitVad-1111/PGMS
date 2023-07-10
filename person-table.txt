@@ -1,0 +1,36 @@
+Full Name (require)
+gender (require)
+Age
+mobile no (require)
+email 
+profile photo (require)
+document (require)
+
+Address 
+------------------
+address line1 (require)
+address line1
+city
+state
+country
+
+
+Parent/Gurdian Name
+gender
+mobile no
+email
+age
+profile photo (option)
+
+Address 
+------------------
+address line1 (require)
+address line1
+city
+state
+country
+
+
+Room
+---------------------
+Root-id

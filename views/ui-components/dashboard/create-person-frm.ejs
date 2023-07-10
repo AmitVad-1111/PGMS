@@ -1,0 +1,54 @@
+<main class="h-full overflow-y-auto">
+  <div class="container px-6 mx-auto grid">
+    <div class="flex items-center justify-between">
+      <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+        <% if(pageTitle){%>
+          <%= pageTitle %>
+            <%}else{%> Blank <%}%>
+      </h2>
+    </div>
+
+    <div class="stepperWrapper">
+      <ul class="stepper-list border-2 border-slate-200 rounded-lg">
+        <li class="stepper-items stepper-items-after cursor-pointer">
+          <spna class="step-number step-success">1</spna>
+          <span class="step-info">Personal Info</span>
+        </li>
+        <li class="stepper-items stepper-items-after cursor-pointer">
+          <spna class="step-number">2</spna>
+          <span class="step-info">Perent/Guardian Details</span>
+        </li>
+        <li class="stepper-items stepper-items-after cursor-pointer">
+          <spna class="step-number">3</spna>
+          <span class="step-info">Payment</span>
+        </li>
+        <li class="stepper-items stepper-items-after cursor-pointer">
+          <spna class="step-number">4</spna>
+          <span class="step-info">Room Details</span>
+        </li>
+      </ul>
+
+      <div class="mt-5" data-content-section>
+        <div data-section-personal>
+          <form method="post" name="add_new_person_1" <% if(currentStep !="step1" ){%> class="hidden"<% } %> >
+              <%- include("./person-info/personal.ejs") %>
+          </form>
+        </div>
+        <div data-section-perent-guardian>
+          <form method="post" name="add_new_person_2" <% if(currentStep !="step2" ){%> class="hidden" <% } %>>
+            <%- include("./person-info/parent-guardian.ejs") %>
+          </form>
+        </div>
+        <div data-section-payment class="hidden">
+          <h2>Payment</h2>
+        </div>
+        <div data-section-room class="hidden">
+          <h2>Room</h2>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</main>

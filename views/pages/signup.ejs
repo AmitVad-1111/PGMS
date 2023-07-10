@@ -2,92 +2,100 @@
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
-                <form class="login100-form validate-form" method="post">
-                    <span class="login100-form-title p-b-48">
+				<form class="login100-form validate-form" method="post">
+					<span class="login100-form-title p-b-48">
 						<a href="/">
-							<img src="/icons/home-colored/home-l.png">
-						</a>	
+							<img class="mx-auto" src="/icons/home-colored/home-l.png">
+						</a>
 						<h2>PGMS</h2>
-                    </span>
+					</span>
 					<span class="login100-form-title login100-form-title-action p-b-26">
 						Signup
 					</span>
 
 					<% if(successMessage){ %>
 						<div class="message success-msg">
-							<span><%= successMessage %></span>
+							<span>
+								<%= successMessage %>
+							</span>
 						</div>
-					<% } %>
+						<% } %>
 
-					<% if(infoMessage){ %>
-						<div class="message info-msg">
-							<span><%= infoMessage %></span>
-						</div>
-					<% } %>
+							<% if(infoMessage){ %>
+								<div class="message info-msg">
+									<span>
+										<%= infoMessage %>
+									</span>
+								</div>
+								<% } %>
 
-					<% if(errorMessage){ %>
-						<div class="message error-msg">
-							<span><%= errorMessage %></span>
-						</div>
-					<% } %>
+									<% if(errorMessage){ %>
+										<div class="message error-msg">
+											<span>
+												<%= errorMessage %>
+											</span>
+										</div>
+										<% } %>
 
-					<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" placeholder="Full Name" name="fullname" value="<%if(oldValue){%><%= oldValue.fullname %><%}%>">
-						<span class="focus-input100 frm-error">
-							<%= errorObj.fullname %>
-						</span>
-					</div>
-                    
-                    <div class="wrap-input100 validate-input">
-						<input class="input100" type="email" placeholder="Email" name="email" value="<%if(oldValue){%><%= oldValue.email %><%}%>">
-						<span class="focus-input100 frm-error">
-							<%= errorObj.email %>
-						</span>
-					</div>
+											<div class="wrap-input100 validate-input">
+												<input class="input100" type="text" placeholder="Full Name" name="fullname"
+													value="<%if(oldValue){%><%= oldValue.fullname %><%}%>">
+												<span class="focus-input100 frm-error">
+													<%= errorObj.fullname %>
+												</span>
+											</div>
 
-					<div class="wrap-input100 validate-input" data-validate="Enter password">
-						<span class="btn-show-pass">
-							<i class="zmdi zmdi-eye"></i>
-						</span>
-						<input class="input100" type="password" placeholder="Password" name="password">
-						<span class="focus-input100 frm-error">
-							<%= errorObj.password %>
-						</span>
-					</div>
+											<div class="wrap-input100 validate-input">
+												<input class="input100" type="email" placeholder="Email" name="email"
+													value="<%if(oldValue){%><%= oldValue.email %><%}%>">
+												<span class="focus-input100 frm-error">
+													<%= errorObj.email %>
+												</span>
+											</div>
 
-                    <div class="wrap-input100 validate-input" data-validate="Enter password">
-						<span class="btn-show-pass">
-							<i class="zmdi zmdi-eye"></i>
-						</span>
-						<input class="input100" type="password" placeholder="Confirm-Password" name="cpass">
-						<span class="focus-input100 frm-error">
-							<%= errorObj.cpass %>
-						</span>
-					</div>
+											<div class="wrap-input100 validate-input" data-validate="Enter password">
+												<span class="btn-show-pass">
+													<i class="zmdi zmdi-eye"></i>
+												</span>
+												<input class="input100" type="password" placeholder="Password" name="password">
+												<span class="focus-input100 frm-error">
+													<%= errorObj.password %>
+												</span>
+											</div>
 
-					<div class="container-login100-form-btn">
-						<div class="wrap-login100-form-btn">
-							<div class="login100-form-bgbtn"></div>
-							<button class="login100-form-btn">
-								Signup
-							</button>
-						</div>
-					</div>
+											<div class="wrap-input100 validate-input" data-validate="Enter password">
+												<span class="btn-show-pass">
+													<i class="zmdi zmdi-eye"></i>
+												</span>
+												<input class="input100" type="password" placeholder="Confirm-Password" name="cpass">
+												<span class="focus-input100 frm-error">
+													<%= errorObj.cpass %>
+												</span>
+											</div>
 
-					<div class="text-center p-t-115">
-						<span class="txt1">
-							Do you have an account?
-						</span>
-						<a class="txt2" href="/">
-							Login 
-						</a>
-					</div>
+											<div class="container-login100-form-btn">
+												<div class="wrap-login100-form-btn">
+													<div class="login100-form-bgbtn"></div>
+													<button class="login100-form-btn">
+														Signup
+													</button>
+												</div>
+											</div>
+
+											<div class="text-center p-t-115">
+												<span class="txt1">
+													Do you have an account?
+												</span>
+												<a class="txt2" href="/">
+													Login
+												</a>
+											</div>
 				</form>
 			</div>
 		</div>
 	</div>
-	
+
 
 	<div id="dropDownSelect1"></div>
-	
-<%- include("../ui-components/auth/footer.ejs") %>
+
+	<%- include("../ui-components/auth/footer.ejs") %>

@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+
+  .text-slate-500 {
+    color: rgb(100 116 139);
+  }
+
+  .-z-5 {
+    z-index: -5;
+  }
+
+  .stepper-wrapper {
+    @apply block drop-shadow-lg;
+  }
+
+  .stepper-list {
+    @apply relative flex w-full bg-white text-slate-500 justify-center items-center;
+  }
+
+  .stepper-items {
+    @apply flex flex-col py-4 grow max-w-full min-w-min relative text-center justify-center items-center;
+  }
+  
+  .stepper-items:not(:last-child):after {
+    content: "";
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    height: 2px;
+    background-color: #000;
+    order: -1;
+  }
+  
+}
+
+
+@layer utilities{
+
+  .step-number{
+    @apply flex justify-center items-center bg-gray-100 text-black w-10 h-10 mt-1 rounded-full font-bold text-sm;
+  }
+
+  .step-info{
+    @apply font-bold text-sm;
+  }
+
+  .step-success{
+    @apply font-bold text-sm bg-green-400 z-10;
+  }
+
+  
+}

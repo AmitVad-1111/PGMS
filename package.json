@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
+    "build-css": "npx tailwindcss -i ./public/css/tailwind-input.css -o ./public/css/tailwind-output.css --watch",
     "degug": "nodemon app.js --inspact-brk"
   },
   "repository": {
@@ -30,6 +31,16 @@
     "express-validator": "^7.0.1",
     "mongoose": "^7.3.1",
     "nodemailer": "^6.9.3",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "tw-elements": "^1.0.0-beta2"
+  },
+  "devDependencies": {
+    "@tailwindcss/custom-forms": "^0.2.1",
+    "autoprefixer": "^10.4.14",
+    "color": "^4.2.3",
+    "cssnano": "^6.0.1",
+    "postcss-cli": "^10.1.0",
+    "tailwindcss": "^3.3.2",
+    "tailwindcss-multi-theme": "^1.0.4"
   }
 }

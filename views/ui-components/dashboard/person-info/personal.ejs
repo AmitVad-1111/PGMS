@@ -1,0 +1,126 @@
+<div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+  <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Personal Details</h4>
+
+  <div class="flex w-full">
+    <div class="flex flex-col w-1/2 mr-10">
+      <label for="person-fullname">Full Name</label>
+      <input type="text" class="form-input border" name="person-fullname" id="person-fullname" value="">
+    </div>
+    <div class="flex flex-col w-1/2">
+      <label for="person-email">Email</label>
+      <input type="email" class="form-input border" name="person-email" id="person-email" value="">
+    </div>
+  </div>
+
+  <div class="flex w-full mt-5">
+    <div class="flex flex-col w-1/2 mr-10">
+      <label for="person-gender">Gender</label>
+      <select class="border py-[9px]" name="person-gender" id="person-gender">
+        <option value="">Select Gender</option>
+        <option value="m">Male</option>
+        <option value="f">Female</option>
+        <option value="o">Other</option>
+      </select>
+    </div>
+    <div class="flex flex-col w-1/2">
+      <label for="person-mobile">Mobile no.</label>
+      <input type="tel" class="form-input border" name="person-mobile" id="person-mobile" value="">
+    </div>
+  </div>
+
+  <div class="flex w-full mt-5">
+    <div class="flex flex-col w-1/2 mr-10">
+      <label>Birth Date</label>
+      <input type="date" class="border py-[9px]" name="person-dob" value="">
+    </div>
+    <div class="flex flex-col w-1/2">
+      <label>Profile Image</label>
+      <input type="file" class="form-input border" name="person-image" value="">
+    </div>
+  </div>
+
+  <div class="block mt-5 border p-3">
+    <h5 class="mb-4 text-md font-semibold text-gray-600 dark:text-gray-300">Document</h5>
+    <div class="flex items-center">
+      <label for="person-doc-dl" class="mr-5">
+        <input type="radio" name="person-doc-type" id="person-doc-dl" value="dl">
+        <span>Driving Licence</span>
+      </label>
+      <label for="person-doc-vi" class="mr-5">
+        <input type="radio" name="person-doc-type" id="person-doc-vi" value="vi">
+        <span>Voter Id</span>
+      </label>
+      <label for="person-doc-aadhar" class="mr-5">
+        <input type="radio" name="person-doc-type" id="person-doc-aadhar" value="aadhar">
+        <span>Aathar</span>
+      </label>
+      <label for="person-doc-pan" class="mr-5">
+        <input type="radio" name="person-doc-type" id="person-doc-pan" value="pan">
+        <span>PAN</span>
+      </label>
+      <label for="person-doc-pass" class="mr-5">
+        <input type="radio" name="person-doc-type" id="person-doc-pass" value="pass">
+        <span>Passport</span>
+      </label>
+      <label for="person-doc-rc" class="mr-5">
+        <input type="radio" name="person-doc-type" id="person-doc-rc" value="rc">
+        <span>Rasan Card</span>
+      </label>
+    </div>
+
+    <div class="flex w-full mt-5">
+      <div class="flex flex-col w-1/2 mr-10">
+        <label for="person-doc-front">Uploade Document(Front)</label>
+        <input type="file" class="form-input border" name="person-doc-front" value="">
+      </div>
+      <div class="flex flex-col w-1/2 hidden">
+        <label for="person-doc-back">Uploade Document(Back)</label>
+        <input type="file" class="form-input border" name="person-doc-back" value="">
+      </div>
+    </div>
+  </div>
+
+  <div class="flex w-full mt-5">
+    <div class="flex flex-col w-1/2 mr-10">
+      <label for="person-address-ln1">Address Line-1</label>
+      <input type="text" class="form-input border" name="person-address-ln1" id="person-address-ln1" value="">
+    </div>
+    <div class="flex flex-col w-1/2">
+      <label for="person-address-ln2">Address Line-2</label>
+      <input type="text" class="form-input border" name="person-address-ln2" id="person-address-ln2" value="">
+    </div>
+  </div>
+
+  <div class="flex w-full mt-5">
+    <div class="flex flex-col w-1/2 mr-10">
+      <label for="person-country">Country</label>
+      <input type="text" class="form-input border" name="person-country" id="person-country" value="">
+    </div>
+    <div class="flex flex-col w-1/2">
+      <label for="person-state">State</label>
+      <input type="text" class="form-input border" name="person-state" id="person-state" value="">
+    </div>
+  </div>
+
+  <div class="flex w-full mt-5">
+    <div class="flex flex-col w-1/2 mr-10">
+      <label for="person-city">City</label>
+      <input type="text" class="form-input border" name="person-city" id="person-city" value="">
+    </div>
+    <div class="flex flex-col w-1/2">
+      <label for="zipcode">Zip code</label>
+      <input type="text" class="form-input border" name="person-zipcode" id="person-zipcode" value="">
+    </div>
+  </div>
+  <div class="w-full text-end">
+    <button next-step-btn class="
+        bg-purple-700
+        px-4
+        py-3
+        mt-10
+        text-white
+      ">
+      Next
+    </button>
+  </div>
+</div>

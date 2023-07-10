@@ -8,7 +8,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
  */
 
 const store = new MongoDBStore({
-    uri: process.env.DB_SESSION_COLLECTION_URI,
+    uri: process.env.DB_PTAH_LOCAL,
     collection: 'sessions'
 });
 
