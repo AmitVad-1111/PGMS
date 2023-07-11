@@ -10,19 +10,19 @@
 
     <div class="stepperWrapper">
       <ul class="stepper-list border-2 border-slate-200 rounded-lg">
-        <li class="stepper-items stepper-items-after cursor-pointer">
+        <li class="stepper-items stepper-items-after">
           <spna class="step-number step-success">1</spna>
           <span class="step-info">Personal Info</span>
         </li>
-        <li class="stepper-items stepper-items-after cursor-pointer">
+        <li class="stepper-items stepper-items-after">
           <spna class="step-number">2</spna>
           <span class="step-info">Perent/Guardian Details</span>
         </li>
-        <li class="stepper-items stepper-items-after cursor-pointer">
+        <li class="stepper-items stepper-items-after">
           <spna class="step-number">3</spna>
           <span class="step-info">Payment</span>
         </li>
-        <li class="stepper-items stepper-items-after cursor-pointer">
+        <li class="stepper-items stepper-items-after">
           <spna class="step-number">4</spna>
           <span class="step-info">Room Details</span>
         </li>
@@ -32,17 +32,19 @@
         <div data-section-personal>
           <form method="post" name="add_new_person_1" <% if(currentStep !="step1" ){%> class="hidden"<% } %> >
               <%- include("./person-info/personal.ejs") %>
+              <input type="hidden" name="currentStep" value="<%= currentStep%>">
           </form>
         </div>
         <div data-section-perent-guardian>
           <form method="post" name="add_new_person_2" <% if(currentStep !="step2" ){%> class="hidden" <% } %>>
             <%- include("./person-info/parent-guardian.ejs") %>
+            <input type="hidden" name="currentStep" value="<%= currentStep%>">
           </form>
         </div>
-        <div data-section-payment class="hidden">
+        <div data-section-payment <% if(currentStep !="step3" ){%> class="hidden" <% } %>>
           <h2>Payment</h2>
         </div>
-        <div data-section-room class="hidden">
+        <div data-section-room <% if(currentStep !="step4" ){%> class="hidden" <% } %>>
           <h2>Room</h2>
         </div>
       </div>

@@ -1,4 +1,6 @@
 const renderView = require("../../utils/helpers");
+const getAllCountry = require("../../utils/state-country");
+
 const getDashBoard = (req, res, next) => {
     renderView(req, res, "pages/dashboard/dash-board", {
         pageTitle: "Dashboard"
@@ -12,9 +14,11 @@ const getAllPgPerson = (req, res, next) => {
 }
 
 const getNewPgPersonFrm = (req, res, next) => {
-    req.session.step1 = { isCurrent: true, status: "pending" };
-    req.session.step2 = { isCurrent: false, status: "pending" };
-    req.session.step3 = { isCurrent: false, status: "pending" };
+    
+    req.session.step1 = { isCompleted: false };
+    req.session.step2 = { isCompleted: false };
+    req.session.step3 = { isCompleted: false };
+    req.session.step4 = { isCompleted: false };
 
     let step = "step1";
 
@@ -24,30 +28,40 @@ const getNewPgPersonFrm = (req, res, next) => {
         step = "step2";
     } else if (req.query.step == '3') {
         step = "step3";
+    } else if (req.query.step == '4') {
+        step = "step4";
     }
 
-    console.log(step)
+    
     renderView(req, res, "pages/dashboard/pg-person/create-person", {
         pageTitle: "Add New Person",
         steps: {
             step1: req.session.step1,
             step2: req.session.step2,
-            step3: req.session.step3
+            step3: req.session.step3,
+            step4: req.session.step4,
         },
-        currentStep: step
+        currentStep: step,
+        country : getAllCountry
     });
 }
 
 const postNewPgPersonFrm = (req, res, next) => {
-    const ses = req.session
-    if (ses.step1 && ses.step1.isCurrent) {
-        ses.step1.status = "completed"
-        ses.step2.isCurrent = true;
-    } else if (ses.step2 && ses.step2.isCurrent) {
-        ses.step2.status = "completed"
-        ses.step3.isCurrent = true;
-    } else if (ses.step3 && ses.step3.isCurrent) {
-        ses.step3.status = "completed"
+    const ses = req.session;
+    let currentStep = req.body.currentStep;
+    
+    if (currentStep == "step1" && !ses.step1.isCompleted) {
+        ses.step1.isCompleted = true;
+        currentStep = "step2";
+    } else if (currentStep == "step2" && !ses.step2.isCompleted) {
+        ses.step2.isCompleted = true;
+        currentStep = "step3";
+    } else if (currentStep == "step3" && !ses.step3.isCompleted) {
+        ses.step3.isCompleted = true;
+        currentStep = "step4";
+    } else if (currentStep == "step4" && !ses.step4.isCompleted) {
+        ses.step4.isCompleted = true;
+        currentStep = "success";
     } else {
 
     }
@@ -57,8 +71,10 @@ const postNewPgPersonFrm = (req, res, next) => {
         steps: {
             step1: req.session.step1,
             step2: req.session.step2,
-            step3: req.session.step3
-        }
+            step3: req.session.step3,
+            step4: req.session.step4,
+        },
+        currentStep: currentStep
     });
 }
 

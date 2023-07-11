@@ -94,7 +94,14 @@
   <div class="flex w-full mt-5">
     <div class="flex flex-col w-1/2 mr-10">
       <label for="person-country">Country</label>
-      <input type="text" class="form-input border" name="person-country" id="person-country" value="">
+      <select class="form-input border" name="person-country" id="person-country">
+        <option>Select Country</option>
+        <%if(country){%>
+            <% Object.entries(country).forEach(([key,val])=>{ %>
+              <option value="<%= key %>"><%= val %></option>
+           <% }) %>
+        <%}%>  
+      </select>
     </div>
     <div class="flex flex-col w-1/2">
       <label for="person-state">State</label>

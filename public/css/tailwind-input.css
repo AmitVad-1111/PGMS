@@ -9,7 +9,7 @@
     color: rgb(100 116 139);
   }
 
-  .-z-5 {
+  .z-5 {
     z-index: -5;
   }
 
@@ -22,35 +22,70 @@
   }
 
   .stepper-items {
-    @apply flex flex-col py-4 grow max-w-full min-w-min relative text-center justify-center items-center;
+    @apply flex grow flex-col justify-center items-center py-4 z-10 bg-white;
   }
-  
-  .stepper-items:not(:last-child):after {
-    content: "";
+
+  .stepper-items:first-child::after{
+    content: '';
+    height: 3px;
+    background: #eee;
+    width: 25%;
+    transform: translateX(50%);
     position: absolute;
-    top: 1.5rem;
-    left: 50%;
-    height: 2px;
-    background-color: #000;
-    order: -1;
+    top:40%;
+    left: 10px;
+    z-index: -1;
   }
-  
+
+
+  .stepper-items:last-child::before{
+    content: '';
+    height: 3px;
+    background: #eee;
+    width: 13%;
+    position: absolute;
+    transform: translateX(-50%);
+    top: 40%;
+    z-index: -1;
+  }
+
+  .stepper-items:not(:first-child):not(:last-child)::before{
+    content: '';
+    height: 3px;
+    background: #eee;
+    width: 16%;
+    position: absolute;
+    transform: translateX(-50%);
+    top: 40%;
+    z-index: -1;
+  }
+
+  .stepper-items:not(:first-child):not(:last-child)::after{
+    content: '';
+    height: 3px;
+    background: #eee;
+    width: 16%;
+    position: absolute;
+    transform: translateX(50%);
+    top: 40%;
+    z-index: -1;
+  }
 }
 
 
-@layer utilities{
+@layer utilities {
 
-  .step-number{
+  .step-number {
     @apply flex justify-center items-center bg-gray-100 text-black w-10 h-10 mt-1 rounded-full font-bold text-sm;
   }
 
-  .step-info{
+  .step-info {
     @apply font-bold text-sm;
   }
 
-  .step-success{
+  .step-success {
     @apply font-bold text-sm bg-green-400 z-10;
   }
 
-  
+
 }
