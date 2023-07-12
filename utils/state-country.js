@@ -2,14 +2,16 @@ const fs = require("fs");
 const path = require("path");
 
 const getAllCountry = {};
+const getAllStates = {};
 getCoutry();
-function getCoutry() {
+function getCoutry(){
   try{
     const c = fs.readFileSync( path.join(__dirname,"../","/public/data/state-country.json") ,"utf-8");
     const countryArr = JSON.parse(c);
     if(countryArr.countries.length){
-      countryArr.countries.forEach(({country},i) => {
+      countryArr.countries.forEach(({country,states},i) => {
         getAllCountry[country] = country;
+        getAllStates[country] = states;
       });
     }
   }catch(err){
@@ -20,5 +22,5 @@ function getCoutry() {
   }
 
 }
-console.log(getAllCountry)
-module.exports = getAllCountry;
+
+module.exports = {getAllCountry,getAllStates};

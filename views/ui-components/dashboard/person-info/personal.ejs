@@ -4,7 +4,10 @@
   <div class="flex w-full">
     <div class="flex flex-col w-1/2 mr-10">
       <label for="person-fullname">Full Name</label>
-      <input type="text" class="form-input border" name="person-fullname" id="person-fullname" value="">
+      <input type="text" class="form-input border <%if(errorObj["person-fullname"]){%>border-red-700<%}%>" name="person-fullname" id="person-fullname" value="<%if(errorObj["person-fullname"]){%><%=oldValue["person-fullname"]%><%}%>">
+      <%if(errorObj["person-fullname"]){%>
+        <span class="text-red-700"><%= errorObj["person-fullname"] %></span>
+      <%}%>
     </div>
     <div class="flex flex-col w-1/2">
       <label for="person-email">Email</label>
@@ -95,17 +98,21 @@
     <div class="flex flex-col w-1/2 mr-10">
       <label for="person-country">Country</label>
       <select class="form-input border" name="person-country" id="person-country">
-        <option>Select Country</option>
+        <option value="">Choose Country</option>
         <%if(country){%>
-            <% Object.entries(country).forEach(([key,val])=>{ %>
-              <option value="<%= key %>"><%= val %></option>
-           <% }) %>
-        <%}%>  
+          <% Object.entries(country).forEach(([key,val])=>{ %>
+            <option value="<%= key %>">
+              <%= val %>
+            </option>
+            <% }) %>
+              <%}%>
       </select>
     </div>
     <div class="flex flex-col w-1/2">
       <label for="person-state">State</label>
-      <input type="text" class="form-input border" name="person-state" id="person-state" value="">
+      <select class="form-input border" name="person-state" id="person-state">
+          <option value="">select state</option>
+      </select>
     </div>
   </div>
 

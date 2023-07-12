@@ -94,22 +94,33 @@
   <div class="flex w-full mt-5">
     <div class="flex flex-col w-1/2 mr-10">
       <label for="person-country">Country</label>
-      <input type="text" class="form-input border" name="person-country" id="person-country" value="">
+      <select class="form-input border" name="person2-country" id="person2-country">
+        <option value="">Choose Country</option>
+        <%if(country){%>
+          <% Object.entries(country).forEach(([key,val])=>{ %>
+            <option value="<%= key %>">
+              <%= val %>
+            </option>
+          <% }) %>
+        <%}%>
+      </select>
     </div>
     <div class="flex flex-col w-1/2">
       <label for="person-state">State</label>
-      <input type="text" class="form-input border" name="person-state" id="person-state" value="">
+      <select class="form-input border" name="person2-state" id="person2-state">
+        <option value="">Choose State</option>
+      </select>
     </div>
   </div>
 
   <div class="flex w-full mt-5">
     <div class="flex flex-col w-1/2 mr-10">
       <label for="person-city">City</label>
-      <input type="text" class="form-input border" name="person-city" id="person-city" value="">
+      <input type="text" class="form-input border" name="person2-city" id="person2-city" value="">
     </div>
     <div class="flex flex-col w-1/2">
       <label for="zipcode">Zip code</label>
-      <input type="text" class="form-input border" name="person-zipcode" id="person-zipcode" value="">
+      <input type="text" class="form-input border" name="person2-zipcode" id="person2-zipcode" value="">
     </div>
   </div>
 

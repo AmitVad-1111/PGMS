@@ -27,7 +27,7 @@ const renderViews = (reqObj,resobj,view,payload) =>{
         // }
 
         let sitePayload = Object.assign(defaults,payload);
-        console.log(sitePayload)
+        // console.log(sitePayload)
         return resobj.status(defaults.status).render(view,sitePayload);
     }
 }
