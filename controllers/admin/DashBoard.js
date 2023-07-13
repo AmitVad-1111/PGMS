@@ -54,11 +54,14 @@ const postNewPgPersonFrm = (req, res, next) => {
     const errors = validationResult(req);
     let parseError = {};
 
+    console.log(parseError)
     if(!errors.isEmpty()){
         const allError = errors.array();
         allError.forEach(err => {
             parseError[err.path] = err.msg
         });
+
+        console.log(parseError);
 
        return renderView(req, res, "pages/dashboard/pg-person/create-person", {
             pageTitle: "Add New Person",
