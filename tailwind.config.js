@@ -6,7 +6,6 @@ module.exports = {
   content: [
     "./public/**/*.{html,js,css}",
     "./views/**/*.{ejs,js,css}",
-    "./node_modules/tw-elements/dist/js/**/*.js"
   ],
   darkMode:'class',
   theme: {
@@ -205,7 +204,6 @@ module.exports = {
   plugins: [
     require('tailwindcss-multi-theme'),
     require('@tailwindcss/custom-forms'),
-    require("tw-elements/dist/plugin.cjs"),
     plugin(({ addUtilities, e, theme, variants }) => {
       const newUtilities = {}
       Object.entries(theme('colors')).map(([name, value]) => {

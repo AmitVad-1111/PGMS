@@ -30,7 +30,7 @@
 
       <div class="mt-5" data-content-section>
         <div data-section-personal>
-          <form method="post" name="add_new_person_1" <% if(currentStep !="step1" ){%> class="hidden"<% } %> >
+          <form method="post" name="add_new_person_1" enctype="multipart/form-data" <% if(currentStep !="step1" ){%> class="hidden"<% } %> >
               <%- include("./person-info/personal.ejs") %>
               <input type="hidden" name="currentStep" value="<%= currentStep%>">
           </form>

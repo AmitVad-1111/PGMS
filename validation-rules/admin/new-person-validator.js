@@ -53,6 +53,8 @@ const newPersonValidator = () => {
     .matches("^[a-zA-Z0-9  -:]+$").withMessage("Please enter valid address"),
     /* ----------------------------------------------------------------------------------- */
     body("person-country").custom((value, { req }) => {
+      console.log(req.body);
+      console.log(req.file);
       if (value.trim() == "") {
         throw new Error("Please select country")
       }
