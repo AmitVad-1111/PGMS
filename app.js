@@ -6,6 +6,7 @@ const dotenv = require("dotenv").config();
 const mongoos = require("mongoose");
 const ErrorHendler = require("./middelware/error-handler");
 const { session, config } = require("./middelware/session-collection");
+const sendSMS = require("./utils/fast-2-sms");
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ mongoos.connect(process.env.DB_PTAH_LOCAL)
         console.log("databese connected")
 
         app.listen(PORT, () => {
+            // sendSMS();
             console.log(`App running at ${PORT}`);
         })
 

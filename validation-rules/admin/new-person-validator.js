@@ -1,4 +1,22 @@
-const { body } = require("express-validator");
+const { body,check} = require("express-validator");
+
+const fileUplaodCustomLogic = (req,field,defaultError) => {
+  const uploadFiles = JSON.parse(JSON.stringify(req.files));
+  if(req.uploadInfo && req.uploadInfo.length){
+    const obj = req.uploadInfo.find(f => f.field == field);
+    if(obj){
+      throw new Error(obj.errorDetail);
+    }else{
+      throw new Error(defaultError);
+    }
+  }else{
+    if(Object.keys(uploadFiles).length == 0 && !req.session.uploadFiles){
+      throw new Error(defaultError);
+    }
+  }
+
+  return true;
+}
 
 const newPersonValidator = () => {
   return [
@@ -53,9 +71,7 @@ const newPersonValidator = () => {
     .matches("^[a-zA-Z0-9  -:]+$").withMessage("Please enter valid address"),
     /* ----------------------------------------------------------------------------------- */
     body("person-country").custom((value, { req }) => {
-      console.log(req.body);
-      console.log(req.file);
-      if (value.trim() == "") {
+        if (value.trim() == "") {
         throw new Error("Please select country")
       }
       return true;
@@ -63,7 +79,24 @@ const newPersonValidator = () => {
     /* ----------------------------------------------------------------------------------- */
     body("person-city","Please enter valid city name").isLength({min:3, max:20}).isAlpha(),
     /* ----------------------------------------------------------------------------------- */
-    body("person-zipcode","Please enter valid zipcode").isLength({min:1, max:6}).isAlphanumeric()
+    body("person-zipcode","Please enter valid zipcode").isLength({min:1, max:6}).isAlphanumeric(),
+    /* ----------------------------------------------------------------------------------- */
+    check("person-image").custom((value,{req})=>{
+      return fileUplaodCustomLogic(req,"person-image","Profile image reqired"); 
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    check("person-doc-front").custom((value,{req})=>{
+      return fileUplaodCustomLogic(req,"person-doc-front","Please upload ID document"); 
+    }),
+
+    /* ----------------------------------------------------------------------------------- */
+    check("person-doc-back").custom((value,{req})=>{
+      if(req.body["person-doc-type"] == "aadhar"){
+        return fileUplaodCustomLogic(req,"person-doc-back","Please upload ID document"); 
+      }
+      return true;
+    })
+
 
   ]
 }

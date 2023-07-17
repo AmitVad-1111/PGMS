@@ -78,7 +78,14 @@
     </div>
     <div class="flex flex-col w-1/2">
       <label>Profile Image</label>
-      <input type="file" class="form-input border" name="person-image" value="">
+      <input 
+        type="file" 
+        class="form-input border <%if(errorObj['person-image']){%>border-red-700<%}%>" 
+        name="person-image" 
+        value="<%if(oldValue['person-image']){%><%=oldValue['person-image']%><%}%>">
+      <%if(errorObj["person-image"]){%>
+        <span class="text-red-700"><%= errorObj["person-image"] %></span>
+      <%}%>
     </div>
   </div>
 
@@ -117,11 +124,25 @@
     <div class="flex w-full mt-5">
       <div class="flex flex-col w-1/2 mr-10">
         <label for="person-doc-front">Uploade Document(Front)</label>
-        <input type="file" class="form-input border" name="person-doc-front" value="">
+        <input 
+          type="file" 
+          class="form-input border <%if(errorObj['person-doc-front']){%>border-red-700<%}%>" 
+          name="person-doc-front" 
+          value="<%if(oldValue['person-doc-front']){%><%=oldValue['person-doc-front']%><%}%>">
+        <%if(errorObj["person-doc-front"]){%>
+          <span class="text-red-700"><%= errorObj["person-doc-front"] %></span>
+        <%}%>
       </div>
-      <div class="flex flex-col w-1/2 hidden">
+      <div class="flex flex-col w-1/2 <%if(oldValue['person-doc-type'] != 'aadhar'){%>hidden<%}%>">
         <label for="person-doc-back">Uploade Document(Back)</label>
-        <input type="file" class="form-input border" name="person-doc-back" value="">
+        <input 
+          type="file"
+          class="form-input border <%if(errorObj['person-doc-back']){%>border-red-700<%}%>" 
+          name="person-doc-back" 
+          value="<%if(oldValue['person-doc-back']){%><%=oldValue['person-doc-back']%><%}%>">
+        <%if(errorObj["person-doc-back"]){%>
+          <span class="text-red-700"><%= errorObj["person-doc-back"] %></span>
+        <%}%>
       </div>
     </div>
   </div>
@@ -166,7 +187,16 @@
     <div class="flex flex-col w-1/2">
       <label for="person-state">State</label>
       <select class="form-input border" name="person-state" id="person-state">
-          <option value="">select state</option>
+          <option value="">Choose State</option>
+          <%if(states){%>
+            <% states.forEach(val=>{ %>
+  
+              <% if(oldValue['person-state'] == val) {%>
+                <option value="<%= val %>" selected><%= val %></option>
+              <%}else{%>
+                <option value="<%= val %>"><%= val %></option>
+            <% }}) %>
+          <%}%>
       </select>
     </div>
   </div>
