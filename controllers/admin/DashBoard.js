@@ -1,7 +1,8 @@
 const renderView = require("../../utils/helpers");
-const { getAllCountry, getAllStates } = require("../../utils/state-country");
+const { getAllCountry, getAllStates, getAllDialCode } = require("../../utils/state-country");
 const fileUploads = require("../../utils/file-upload-helper");
 const { validationResult } = require("express-validator");
+const sendSMS = require("../../utils/send-sms");
 
 
 const getDashBoard = (req, res, next) => {
@@ -18,20 +19,22 @@ const getAllPgPerson = (req, res, next) => {
 
 const getNewPgPersonFrm = (req, res, next) => {
 
-    req.session.step1 = { isCompleted: false };
-    req.session.step2 = { isCompleted: false };
-    req.session.step3 = { isCompleted: false };
-    req.session.step4 = { isCompleted: false };
+    // sendSMS();
+
+    req.session.step1 = { isCompleted: req.session?.step1?.isCompleted || false };
+    req.session.step2 = { isCompleted: req.session?.step2?.isCompleted || false };
+    req.session.step3 = { isCompleted: req.session?.step3?.isCompleted || false };
+    req.session.step4 = { isCompleted: req.session?.step4?.isCompleted || false };
 
     let step = "step1";
 
-    if (req.query.step == '1') {
+    if (!req.session?.step1?.isCompleted) {
         step = "step1";
-    } else if (req.query.step == '2') {
+    } else if (!req.session?.step2?.isCompleted) {
         step = "step2";
-    } else if (req.query.step == '3') {
+    } else if (!req.session?.step3?.isCompleted) {
         step = "step3";
-    } else if (req.query.step == '4') {
+    } else if (!req.session?.step4?.isCompleted) {
         step = "step4";
     }
 
@@ -103,10 +106,19 @@ const postNewPgPersonFrm = (req, res, next) => {
         ses.step4.isCompleted = true;
         currentStep = "success";
     } else {
-
+        delete req.session.step1;
+        delete req.session.step2;
+        delete req.session.step3;
+        delete req.session.step4;
     }
 
-    
+    if (!req.session.userInfo) {
+        req.session.userInfo = { ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles };
+    } else {
+        req.session.userInfo = { ...req.session.userInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
+    }
+
+    console.log(req.session.userInfo);
     renderView(req, res, "pages/dashboard/pg-person/create-person", {
         pageTitle: "Add New Person",
         steps: {
