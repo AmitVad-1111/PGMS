@@ -9,7 +9,7 @@ const sendSMS = async () => {
     body: JSON.stringify({
       "route": "otp",
       "variables_values": "559933",
-      "numbers": "9638867609",
+      "numbers": "12345685469",
     })
   })
   console.log("fast2sms response: ", res);
