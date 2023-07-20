@@ -1,243 +1,296 @@
-<div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-  <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Personal Details</h4>
+<div class="mt-5" data-content-section>
+  <div data-section-personal>
+    <form method="post" name="add_new_person_1" class="is-active" enctype="multipart/form-data">
+      <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Personal Details</h4>
 
-  <div class="flex w-full">
-    <div class="flex flex-col w-1/2 mr-10">
-      <label for="person-fullname">Full Name</label>
-      <input 
-        type="text" 
-        class="form-input border <%if(errorObj['person-fullname']){%>border-red-700<%}%>" 
-        name="person-fullname" 
-        id="person-fullname" 
-        value="<%if(oldValue['person-fullname']){%><%=oldValue['person-fullname']%><%}%>">
-      
-      <%if(errorObj["person-fullname"]){%>
-        <span class="text-red-700"><%= errorObj["person-fullname"] %></span>
-      <%}%>
-    </div>
+        <div class="flex w-full">
+          <div class="flex flex-col w-1/2 mr-10">
+            <label for="person-fullname">Full Name</label>
+            <input type="text" class="form-input border <%if(errorObj['person-fullname']){%>border-red-700<%}%>"
+              name="person-fullname" id="person-fullname"
+              value="<%if(oldValue['person-fullname']){%><%=oldValue['person-fullname']%><%}%>">
 
-    <div class="flex flex-col w-1/2">
-      <label for="person-email">Email</label>
-      <input 
-        type="email"
-        class="form-input border <%if(errorObj['person-email']){%>border-red-700<%}%>" 
-        name="person-email" 
-        id="person-email" 
-        value="<%if(oldValue["person-email"]){%><%=oldValue["person-email"]%><%}%>">
+            <%if(errorObj["person-fullname"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-fullname"] %>
+              </span>
+              <%}%>
+          </div>
 
-        <%if(errorObj["person-email"]){%>
-          <span class="text-red-700"><%= errorObj["person-email"] %></span>
-        <%}%>
-    </div>
-  </div>
+          <div class="flex flex-col w-1/2">
+            <label for="person-email">Email</label>
+            <input type="email" class="form-input border <%if(errorObj['person-email']){%>border-red-700<%}%>"
+              name="person-email" id="person-email"
+              value="<%if(oldValue['person-email']){%><%=oldValue['person-email']%><%}%>">
 
-  <div class="flex w-full mt-5">
-    <div class="flex flex-col w-1/2 mr-10">
-      <label for="person-gender">Gender</label>
-      <select class="border py-[9px] <%if(errorObj['person-gender']){%>border-red-700<%}%>" name="person-gender" id="person-gender">
-        <option value="">Select Gender</option>
-        <% Object.entries({'m':'male','f':'female','o':'other'}).forEach(([key,val]) => {%>
-            <% if(oldValue["person-gender"] == key) {%>
-              <option value="<%=key%>" selected><%=val%></option>
-            <%}else{%>
-              <option value="<%=key%>"><%=val%></option>
-         <% }}) %>
-        </select>
-      <%if(errorObj["person-gender"]){%>
-        <span class="text-red-700"><%= errorObj["person-gender"] %></span>
-      <%}%>
-    </div>
-    <div class="flex flex-col w-1/2">
-      <label for="person-mobile">Mobile no.</label>
-      <input 
-        type="tel" 
-        class="form-input border <%if(errorObj['person-mobile']){%>border-red-700<%}%>" 
-        name="person-mobile" 
-        id="person-mobile" 
-        value="<%if(oldValue['person-mobile']){%><%=oldValue['person-mobile']%><%}%>">
+            <%if(errorObj["person-email"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-email"] %>
+              </span>
+              <%}%>
+          </div>
+        </div>
+
+        <div class="flex w-full mt-5">
+          <div class="flex flex-col w-1/2 mr-10">
+            <label for="person-gender">Gender</label>
+            <select class="border py-[9px] <%if(errorObj['person-gender']){%>border-red-700<%}%>" name="person-gender"
+              id="person-gender">
+              <option value="">Select Gender</option>
+              <% Object.entries({'m':'male','f':'female','o':'other'}).forEach(([key,val])=> {%>
+                <% if(oldValue["person-gender"]==key) {%>
+                  <option value="<%=key%>" selected>
+                    <%=val%>
+                  </option>
+                  <%}else{%>
+                    <option value="<%=key%>">
+                      <%=val%>
+                    </option>
+                    <% }}) %>
+            </select>
+            <%if(errorObj["person-gender"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-gender"] %>
+              </span>
+              <%}%>
+          </div>
+          <div class="flex flex-col w-1/2">
+            <label for="person-mobile">Mobile no.</label>
+            <input type="tel" class="form-input border <%if(errorObj['person-mobile']){%>border-red-700<%}%>"
+              name="person-mobile" id="person-mobile"
+              value="<%if(oldValue['person-mobile']){%><%=oldValue['person-mobile']%><%}%>">
+
+            <%if(errorObj["person-mobile"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-mobile"] %>
+              </span>
+              <%}%>
+          </div>
+
+        </div>
+
+        <div class="flex w-full mt-5">
+          <div class="flex flex-col w-1/2 mr-10">
+            <label>Birth Date</label>
+            <input type="date" class="border py-[9px] <%if(errorObj['person-dob']){%>border-red-700<%}%>"
+              name="person-dob" value="<%if(oldValue['person-dob']){%><%=oldValue['person-dob']%><%}%>">
+
+            <%if(errorObj["person-dob"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-dob"] %>
+              </span>
+              <%}%>
+          </div>
+          <div class="flex flex-col w-1/2">
+            <label>Profile Image</label>
+            <input type="file" class="form-input border <%if(errorObj['person-image']){%>border-red-700<%}%>"
+              name="person-image" value="<%if(oldValue['person-image']){%><%=oldValue['person-image']%><%}%>">
+            <%if(errorObj["person-image"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-image"] %>
+              </span>
+              <%}%>
+
+                <%if(oldValue['person-image']){%>
+                  <div class="border border-gray-700 w-24 h-24 mt-3">
+                    <img src="/images/uploads<%=oldValue['person-image']%>" class="w-24 h-24 p-1"
+                      alt="<%=oldValue['person-fullname']%>">
+                  </div>
+                  <%}%>
+          </div>
+        </div>
+
+        <div class="block mt-5 border p-3">
+          <h5 class="mb-4 text-md font-semibold text-gray-600 dark:text-gray-300">Document</h5>
+          <div class="flex items-center <%if(errorObj['person-doc-type']){%>border border-red-700<%}%>">
+            <label for="person-doc-dl" class="mr-5">
+              <input type="radio" name="person-doc-type" id="person-doc-dl" <%if(oldValue['person-doc-type']=='dl'
+                ){%>checked<%}%> value="dl">
+                <span>Driving Licence</span>
+            </label>
+            <label for="person-doc-vi" class="mr-5">
+              <input type="radio" name="person-doc-type" id="person-doc-vi" <%if(oldValue['person-doc-type']=='vi'
+                ){%>checked<%}%> value="vi">
+                <span>Voter Id</span>
+            </label>
+            <label for="person-doc-aadhar" class="mr-5">
+              <input type="radio" name="person-doc-type" id="person-doc-aadhar"
+                <%if(oldValue['person-doc-type']=='aadhar' ){%>checked<%}%> value="aadhar">
+                <span>Aathar</span>
+            </label>
+            <label for="person-doc-pan" class="mr-5">
+              <input type="radio" name="person-doc-type" id="person-doc-pan" <%if(oldValue['person-doc-type']=='pan'
+                ){%>checked<%}%> value="pan">
+                <span>PAN</span>
+            </label>
+            <label for="person-doc-pass" class="mr-5">
+              <input type="radio" name="person-doc-type" id="person-doc-pass" <%if(oldValue['person-doc-type']=='pass'
+                ){%>checked<%}%> value="pass">
+                <span>Passport</span>
+            </label>
+            <label for="person-doc-rc" class="mr-5">
+              <input type="radio" name="person-doc-type" id="person-doc-rc" <%if(oldValue['person-doc-type']=='rc'
+                ){%>checked<%}%> value="rc">
+                <span>Rasan Card</span>
+            </label>
+            <%if(errorObj["person-doc-type"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-doc-type"] %>
+              </span>
+              <%}%>
+          </div>
+
+          <div class="flex w-full mt-5">
+            <div class="flex flex-col w-1/2 mr-10">
+              <label for="person-doc-front">Uploade Document(Front)</label>
+              <input type="file" class="form-input border <%if(errorObj['person-doc-front']){%>border-red-700<%}%>"
+                name="person-doc-front"
+                value="<%if(oldValue['person-doc-front']){%><%=oldValue['person-doc-front']%><%}%>">
+              <%if(errorObj["person-doc-front"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["person-doc-front"] %>
+                </span>
+                <%}%>
+                  <%if(oldValue['person-doc-front']){%>
+                    <div class="border border-gray-700 w-24 h-24 mt-3">
+                      <img src="/images/uploads<%=oldValue['person-doc-front']%>" class="w-24 h-24 p-1"
+                        alt="<%=oldValue['person-fullname']%>">
+                    </div>
+                    <%}%>
+            </div>
+            <div class="flex flex-col w-1/2 <%if(oldValue['person-doc-type'] != 'aadhar'){%>hidden<%}%>">
+              <label for="person-doc-back">Uploade Document(Back)</label>
+              <input type="file" class="form-input border <%if(errorObj['person-doc-back']){%>border-red-700<%}%>"
+                name="person-doc-back"
+                value="<%if(oldValue['person-doc-back']){%><%=oldValue['person-doc-back']%><%}%>">
+              <%if(errorObj["person-doc-back"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["person-doc-back"] %>
+                </span>
+                <%}%>
+                  <%if(oldValue['person-doc-back']){%>
+                    <div class="border border-gray-700 w-24 h-24 mt-3">
+                      <img src="/images/uploads/<%=oldValue['person-doc-back']%>" class="w-24 h-24 p-1"
+                        alt="<%=oldValue['person-fullname']%>">
+                    </div>
+                    <%}%>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex w-full mt-5">
+          <div class="flex flex-col w-1/2 mr-10">
+            <label for="person-address-ln1">Address Line-1</label>
+            <input type="text" class="form-input border <%if(errorObj['person-address-ln1']){%>border-red-700<%}%>"
+              name="person-address-ln1" id="person-address-ln1"
+              value="<%if(oldValue['person-address-ln1']){%><%=oldValue['person-address-ln1']%><%}%>">
+            <%if(errorObj["person-address-ln1"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-address-ln1"] %>
+              </span>
+              <%}%>
+          </div>
+          <div class="flex flex-col w-1/2">
+            <label for="person-address-ln2">Address Line-2</label>
+            <input type="text" class="form-input border" name="person-address-ln2" id="person-address-ln2" value="">
+          </div>
+        </div>
+
+        <div class="flex w-full mt-5">
+          <div class="flex flex-col w-1/2 mr-10">
+            <label for="person-country">Country</label>
+            <select class="form-input border <%if(errorObj['person-country']){%>border-red-700<%}%>" name="person-country" id="person-country">
+              <option value="">Choose Country</option>
+              <%if(country){%>
+                <% Object.entries(country).forEach(([key,val])=>{ %>
+
+                  <% if(oldValue['person-country']==key) {%>
+                    <option value="<%= key %>" selected>
+                      <%= val %>
+                    </option>
+                    <%}else{%><%if(errorObj['person-country']){%>border-red-700<%}%>
+                          <option value="<%= key %>">
+                            <%= val %>
+                          </option>
+                          <% }}) %>
+                            <%}%>
+            </select>
+
+            <%if(errorObj["person-country"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-country"] %>
+              </span>
+              <%}%>
+          </div>
+          <div class="flex flex-col w-1/2">
+            <label for="person-state">State</label>
+            <select class="form-input border <%if(errorObj['person-state']){%>border-red-700<%}%>" name="person-state"
+              id="person-state">
+              <option value="">Choose State</option>
+              <%if(states){%>
+                <% states.forEach(val=>{ %>
+
+                  <% if(oldValue['person-state']==val) {%>
+                    <option value="<%= val %>" selected>
+                      <%= val %>
+                    </option>
+                    <%}else{%>
+                      <option value="<%= val %>">
+                        <%= val %>
+                      </option>
+                      <% }}) %>
+                        <%}%>
+            </select>
+            <%if(errorObj["person-state"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-state"] %>
+              </span>
+              <%}%>
+          </div>
+        </div>
+
+        <div class="flex w-full mt-5">
+          <div class="flex flex-col w-1/2 mr-10">
+            <label for="person-city">City</label>
+            <input type="text" class="form-input border <%if(errorObj['person-city']){%>border-red-700<%}%>"
+              name="person-city" id="person-city"
+              value="<%if(oldValue['person-city']){%><%=oldValue['person-city']%><%}%>">
+
+            <%if(errorObj["person-city"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-city"] %>
+              </span>
+              <%}%>
+          </div>
+          <div class="flex flex-col w-1/2">
+            <label for="zipcode">Zip code</label>
+            <input type="text" class="form-input border <%if(errorObj['person-zipcode']){%>border-red-700<%}%>"
+              name="person-zipcode" id="person-zipcode"
+              value="<%if(oldValue['person-zipcode']){%><%=oldValue['person-zipcode']%><%}%>">
+
+            <%if(errorObj["person-zipcode"]){%>
+              <span class="text-red-700">
+                <%= errorObj["person-zipcode"] %>
+              </span>
+              <%}%>
+          </div>
+        </div>
         
-        <%if(errorObj["person-mobile"]){%>
-          <span class="text-red-700"><%= errorObj["person-mobile"] %></span>
-        <%}%>
-    </div>
-    
-  </div>
-
-  <div class="flex w-full mt-5">
-    <div class="flex flex-col w-1/2 mr-10">
-      <label>Birth Date</label>
-      <input
-       type="date" 
-       class="border py-[9px] <%if(errorObj['person-dob']){%>border-red-700<%}%>" 
-       name="person-dob" 
-       value="<%if(oldValue['person-dob']){%><%=oldValue['person-dob']%><%}%>">
-
-       <%if(errorObj["person-dob"]){%>
-        <span class="text-red-700"><%= errorObj["person-dob"] %></span>
-      <%}%>
-    </div>
-    <div class="flex flex-col w-1/2">
-      <label>Profile Image</label>
-      <input 
-        type="file" 
-        class="form-input border <%if(errorObj['person-image']){%>border-red-700<%}%>" 
-        name="person-image" 
-        value="<%if(oldValue['person-image']){%><%=oldValue['person-image']%><%}%>">
-      <%if(errorObj["person-image"]){%>
-        <span class="text-red-700"><%= errorObj["person-image"] %></span>
-      <%}%>
-    </div>
-  </div>
-
-  <div class="block mt-5 border p-3">
-    <h5 class="mb-4 text-md font-semibold text-gray-600 dark:text-gray-300">Document</h5>
-    <div class="flex items-center <%if(errorObj['person-doc-type']){%>border border-red-700<%}%>">
-      <label for="person-doc-dl" class="mr-5">
-        <input type="radio" name="person-doc-type" id="person-doc-dl" <%if(oldValue['person-doc-type'] == 'dl'){%>checked<%}%> value="dl">
-        <span>Driving Licence</span>
-      </label>
-      <label for="person-doc-vi" class="mr-5">
-        <input type="radio" name="person-doc-type" id="person-doc-vi" <%if(oldValue['person-doc-type'] == 'vi'){%>checked<%}%> value="vi">
-        <span>Voter Id</span>
-      </label>
-      <label for="person-doc-aadhar" class="mr-5">
-        <input type="radio" name="person-doc-type" id="person-doc-aadhar" <%if(oldValue['person-doc-type'] == 'aadhar'){%>checked<%}%> value="aadhar">
-        <span>Aathar</span>
-      </label>
-      <label for="person-doc-pan" class="mr-5">
-        <input type="radio" name="person-doc-type" id="person-doc-pan" <%if(oldValue['person-doc-type'] == 'pan'){%>checked<%}%> value="pan">
-        <span>PAN</span>
-      </label>
-      <label for="person-doc-pass" class="mr-5">
-        <input type="radio" name="person-doc-type" id="person-doc-pass" <%if(oldValue['person-doc-type'] == 'pass'){%>checked<%}%> value="pass">
-        <span>Passport</span>
-      </label>
-      <label for="person-doc-rc" class="mr-5">
-        <input type="radio" name="person-doc-type" id="person-doc-rc" <%if(oldValue['person-doc-type'] == 'rc'){%>checked<%}%> value="rc">
-        <span>Rasan Card</span>
-      </label>
-      <%if(errorObj["person-doc-type"]){%>
-        <span class="text-red-700"><%= errorObj["person-doc-type"] %></span>
-      <%}%>
-    </div>
-
-    <div class="flex w-full mt-5">
-      <div class="flex flex-col w-1/2 mr-10">
-        <label for="person-doc-front">Uploade Document(Front)</label>
-        <input 
-          type="file" 
-          class="form-input border <%if(errorObj['person-doc-front']){%>border-red-700<%}%>" 
-          name="person-doc-front" 
-          value="<%if(oldValue['person-doc-front']){%><%=oldValue['person-doc-front']%><%}%>">
-        <%if(errorObj["person-doc-front"]){%>
-          <span class="text-red-700"><%= errorObj["person-doc-front"] %></span>
-        <%}%>
+        <div class="w-full text-end">
+          <button next-step-btn class="
+              bg-purple-700
+              px-4
+              py-3
+              mt-10
+              text-white
+            ">
+            Next
+          </button>
+        </div>
       </div>
-      <div class="flex flex-col w-1/2 <%if(oldValue['person-doc-type'] != 'aadhar'){%>hidden<%}%>">
-        <label for="person-doc-back">Uploade Document(Back)</label>
-        <input 
-          type="file"
-          class="form-input border <%if(errorObj['person-doc-back']){%>border-red-700<%}%>" 
-          name="person-doc-back" 
-          value="<%if(oldValue['person-doc-back']){%><%=oldValue['person-doc-back']%><%}%>">
-        <%if(errorObj["person-doc-back"]){%>
-          <span class="text-red-700"><%= errorObj["person-doc-back"] %></span>
-        <%}%>
-      </div>
-    </div>
+    </form>
   </div>
 
-  <div class="flex w-full mt-5">
-    <div class="flex flex-col w-1/2 mr-10">
-      <label for="person-address-ln1">Address Line-1</label>
-      <input 
-        type="text" 
-        class="form-input border <%if(errorObj['person-address-ln1']){%>border-red-700<%}%>" 
-        name="person-address-ln1" id="person-address-ln1" value="<%if(oldValue['person-address-ln1']){%><%=oldValue['person-address-ln1']%><%}%>">
-      <%if(errorObj["person-address-ln1"]){%>
-        <span class="text-red-700"><%= errorObj["person-address-ln1"] %></span>
-      <%}%>
-    </div>
-    <div class="flex flex-col w-1/2">
-      <label for="person-address-ln2">Address Line-2</label>
-      <input type="text" class="form-input border" name="person-address-ln2" id="person-address-ln2" value="">
-    </div>
-  </div>
-
-  <div class="flex w-full mt-5">
-    <div class="flex flex-col w-1/2 mr-10">
-      <label for="person-country">Country</label>
-      <select class="form-input border <%if(errorObj['person-country']){%>border-red-700<%}%>" name="person-country" id="person-country">
-        <option value="">Choose Country</option>
-        <%if(country){%>
-          <% Object.entries(country).forEach(([key,val])=>{ %>
-
-            <% if(oldValue['person-country'] == key) {%>
-              <option value="<%= key %>" selected><%= val %></option>
-            <%}else{%>
-              <option value="<%= key %>"><%= val %></option>
-          <% }}) %>
-        <%}%>
-      </select>
-
-      <%if(errorObj["person-country"]){%>
-        <span class="text-red-700"><%= errorObj["person-country"] %></span>
-      <%}%>
-    </div>
-    <div class="flex flex-col w-1/2">
-      <label for="person-state">State</label>
-      <select class="form-input border" name="person-state" id="person-state">
-          <option value="">Choose State</option>
-          <%if(states){%>
-            <% states.forEach(val=>{ %>
   
-              <% if(oldValue['person-state'] == val) {%>
-                <option value="<%= val %>" selected><%= val %></option>
-              <%}else{%>
-                <option value="<%= val %>"><%= val %></option>
-            <% }}) %>
-          <%}%>
-      </select>
-    </div>
-  </div>
-
-  <div class="flex w-full mt-5">
-    <div class="flex flex-col w-1/2 mr-10">
-      <label for="person-city">City</label>
-      <input 
-        type="text" 
-        class="form-input border <%if(errorObj['person-city']){%>border-red-700<%}%>" 
-        name="person-city" 
-        id="person-city" 
-        value="<%if(oldValue['person-city']){%><%=oldValue['person-city']%><%}%>">
-
-        <%if(errorObj["person-city"]){%>
-          <span class="text-red-700"><%= errorObj["person-city"] %></span>
-        <%}%>
-    </div>
-    <div class="flex flex-col w-1/2">
-      <label for="zipcode">Zip code</label>
-      <input 
-        type="text" 
-        class="form-input border <%if(errorObj['person-zipcode']){%>border-red-700<%}%>" 
-        name="person-zipcode" 
-        id="person-zipcode" 
-        value="<%if(oldValue['person-zipcode']){%><%=oldValue['person-zipcode']%><%}%>">
-
-        <%if(errorObj["person-zipcode"]){%>
-          <span class="text-red-700"><%= errorObj["person-zipcode"] %></span>
-        <%}%>
-    </div>
-  </div>
-  <div class="w-full text-end">
-    <button next-step-btn class="
-        bg-purple-700
-        px-4
-        py-3
-        mt-10
-        text-white
-      ">
-      Next
-    </button>
-  </div>
-</div>
+ 

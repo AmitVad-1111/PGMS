@@ -1,11 +1,49 @@
 <%- include("../../../ui-components/dashboard/header.ejs") %>
   <!-- sidebar -->
-<%- include("../../../ui-components/dashboard/sidebar.ejs") %>
+  <%- include("../../../ui-components/dashboard/sidebar.ejs") %>
 
     <!-- main content -->
-<div class="flex flex-col flex-1 w-full">
-  <%- include("../../../ui-components/dashboard/navigation.ejs") %>
-  <%- include("../../../ui-components/dashboard/create-person-frm.ejs") %>
-</div>
+    <div class="flex flex-col flex-1 w-full">
+      <%- include("../../../ui-components/dashboard/navigation.ejs") %>
+        <main class="h-full overflow-y-auto">
+          <div class="container px-6 mx-auto grid">
+            <div class="flex items-center justify-between">
+              <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+                <% if(pageTitle){%>
+                  <%= pageTitle %>
+                    <%}else{%> Blank <%}%>
+              </h2>
+            </div>
 
-<%- include("../../../ui-components/dashboard/footer.ejs") %>
+            <div class="stepperWrapper">
+              <%- include("../../../ui-components/dashboard/stepper.ejs") %>
+                <%- include("../../../ui-components/dashboard/person-info/personal.ejs") %>
+            </div>
+          </div>
+        </main>
+    </div>
+
+    <!-- mobile no varification popup -->
+    <div class="bg-gray-700 w-full h-full fixed z-50 top-0 opacity-30 p-0">
+    </div>
+    <div class="fixed z-[51] w-full h-full inset-y-1/4">
+      <form method="post" class="bg-white border w-1/4 mx-auto">
+        <div class="p-5">
+          <div class="flex items-center justify-between mt-5">
+            <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Verify Mobile no.</h2>
+            
+          </div>
+          <div class="mt-5">
+            <label for="mobile-verification">Enter Verification Code</label>
+            <input type="tel" class="border w-full py-2 px-1 text-3xl" name="mobile-verification"
+              id="mobile-verification" maxlength="6" value="" />
+          </div>
+          <div class="flex items-center justify-between mt-5">
+            <button next-step-btn class="bg-purple-700 px-4 py-3 text-white">Submit</button>
+            <a href="#" class="">Resend Verification Code</a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <%- include("../../../ui-components/dashboard/footer.ejs") %>

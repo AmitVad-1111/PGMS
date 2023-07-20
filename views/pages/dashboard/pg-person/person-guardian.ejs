@@ -1,0 +1,26 @@
+<%- include("../../../ui-components/dashboard/header.ejs") %>
+  <!-- sidebar -->
+<%- include("../../../ui-components/dashboard/sidebar.ejs") %>
+
+    <!-- main content -->
+<div class="flex flex-col flex-1 w-full">
+  <%- include("../../../ui-components/dashboard/navigation.ejs") %>
+  <main class="h-full overflow-y-auto">
+    <div class="container px-6 mx-auto grid">
+      <div class="flex items-center justify-between">
+        <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+          <% if(pageTitle){%>
+            <%= pageTitle %>
+              <%}else{%> Blank <%}%>
+        </h2>
+      </div>
+  
+      <div class="stepperWrapper">
+        <%- include("../../../ui-components/dashboard/stepper.ejs") %>
+        <%- include("../../../ui-components/dashboard/person-info/parent-guardian.ejs") %>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include("../../../ui-components/dashboard/footer.ejs") %>

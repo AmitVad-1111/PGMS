@@ -10,7 +10,7 @@ const sendSMS = async () => {
 
   client.verify.v2.services(serviceSid)
     .verifications
-    .create({ to: 'mobile no', channel: 'whatsapp' })
+    .create({ to: '', channel: 'whatsapp' })
     .then(verification => console.log("Twillio Response", verification));
 
 }

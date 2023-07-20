@@ -1,7 +1,10 @@
 const { body, check } = require("express-validator");
 
 const fileUplaodCustomLogic = (req, field, defaultError) => {
-  const uploadFiles = JSON.parse(JSON.stringify(req.files));
+  const uploadFiles = req.files == undefined ? null : JSON.parse(JSON.stringify(req?.files));
+  if (uploadFiles == null) {
+    throw new Error(defaultError);
+  }
   if (req.uploadInfo && req.uploadInfo.length) {
     const obj = req.uploadInfo.find(f => f.field == field);
     if (obj) {
@@ -18,8 +21,12 @@ const fileUplaodCustomLogic = (req, field, defaultError) => {
   return true;
 }
 
-const newPersonValidator = () => {
-  return [
+const personalInfoValidator = () => {
+ return [
+    /*******************************************************
+      Parsonal Form Validation
+     *******************************************************/
+
     body("person-fullname")
       .isLength({ min: 2 })
       .withMessage("Name is too small")
@@ -105,7 +112,82 @@ const newPersonValidator = () => {
     })
 
 
+  ];
+}
+
+
+const parentGuardianValidator = () => {
+  return [
+
+    /*******************************************************
+      Parent/Guardian Form Validation
+     *******************************************************/
+    body("person2-fullname")
+      .isLength({ min: 2 })
+      .withMessage("Name is too small")
+      .isLength({ max: 50 })
+      .withMessage("Name is too big")
+      .matches("^[a-zA-Z ]+$")
+      .withMessage("Please enter valid Name"),
+
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-email").isEmail().withMessage("Please enter valid email"),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-gender").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please select gender")
+      }
+      return true;
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-mobile", "Please enter valid mobile no")
+      .isLength({ min: 1 })
+      .isMobilePhone(),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-doc-type").custom((value) => {
+      if (value == undefined) {
+        throw new Error("please select document type");
+      }
+      return true
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-address-ln1")
+      .isLength({ min: 1 }).withMessage("Please enter address")
+      .matches("^[a-zA-Z0-9  -:]+$").withMessage("Please enter valid address"),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-country").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please select country")
+      }
+      return true;
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-state").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please select state")
+      }
+      return true;
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-city", "Please enter valid city name").isLength({ min: 3, max: 20 }).isAlpha(),
+    /* ----------------------------------------------------------------------------------- */
+    body("person2-zipcode", "Please enter valid zipcode").isLength({ min: 1, max: 6 }).isAlphanumeric(),
+    /* ----------------------------------------------------------------------------------- */
+    check("person2-doc-front").custom((value, { req }) => {
+      return fileUplaodCustomLogic(req, "person2-doc-front", "Please upload ID document");
+    }),
+
+    /* ----------------------------------------------------------------------------------- */
+    check("person2-doc-back").custom((value, { req }) => {
+      if (req.body["person2-doc-type"] == "aadhar") {
+        return fileUplaodCustomLogic(req, "person2-doc-back", "Please upload ID document");
+      }
+      return true;
+    })
   ]
 }
 
-module.exports = newPersonValidator;
+module.exports = {
+  personalInfoValidator,
+  parentGuardianValidator
+};
