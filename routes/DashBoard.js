@@ -9,7 +9,8 @@ const {
    postNewPgPersonFrm,
    getNewPgPersonGuardianFrm,
    postNewPgPersonGuardianFrm,
-   getStates
+   getStates,
+   postVerifyCode
 } = require("../controllers/admin/DashBoard");
 
 const uploadFields = [
@@ -32,5 +33,6 @@ router.post("/person/create-new/guardian-info",fileUploads.fields(uploadFields),
 
 // Ajax Routes
 router.post("/states", getStates);
+router.post("/verifycode",postVerifyCode);
 
 module.exports = router;
