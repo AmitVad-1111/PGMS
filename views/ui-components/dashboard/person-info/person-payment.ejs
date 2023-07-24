@@ -1,0 +1,47 @@
+<div class="mt-5" data-content-section>
+  <div data-section-personal>
+    <form method="post" name="add_new_person_3" enctype="multipart/form-data">
+      <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Payment Details</h4>
+
+        <div class="flex w-full mt-5 items-center justify-between">
+          <div class="flex w-full">
+            <div class="flex flex-col w-1/2 mr-10">
+              <label for="payment-type">Payment Type</label>
+              <select class="border py-[9px] mt-2" name="payment-type" id="payment-type">
+                <option value="">Select Payment Type</option>
+                <% Object.entries({'cash':'Cash','online':'Online'}).forEach(([key,val])=> {%>
+                  <option value="<%=key%>">
+                    <%=val%>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+
+
+            <div class="flex flex-col w-1/2 mr-10">
+              <label for="payment-amt">Payment Amount</label>
+              <input type="text" class="form-input border mt-2" name="payment-amt" id="payment-amt" value="">
+            </div>
+
+          </div>
+        </div>
+        <div class="flex flex-col w-1/2 mr-10 mt-3">
+          <label for="payment-amt">Additional Comment</label>
+          <textarea class="form-input border mt-2" name="payment-comment" id="payment-comment"
+            placeholder="eg. Rent for April month">
+            </textarea>
+        </div>
+        <div class="w-full text-end">
+          <button next-step-btn class="
+            bg-purple-700
+            px-4
+            py-3
+            mt-10
+            text-white
+          ">
+            Next
+          </button>
+        </div>
+    </form>
+  </div>

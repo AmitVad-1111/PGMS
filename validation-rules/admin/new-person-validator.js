@@ -187,7 +187,27 @@ const parentGuardianValidator = () => {
   ]
 }
 
+const paymentFormValidator = () =>{
+  return [
+    body("payment-type").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please select payment type")
+      }
+      return true;
+    }),
+    body("payment-amt").custom((value, { req }) => {
+      const amt = parseInt(value);
+      console.log(amt)
+      if (!Number.isInteger(amt)) {
+        throw new Error("Please enter valid payment amount")
+      }
+      return true;
+    })
+  ]
+}
+
 module.exports = {
   personalInfoValidator,
-  parentGuardianValidator
+  parentGuardianValidator,
+  paymentFormValidator
 };

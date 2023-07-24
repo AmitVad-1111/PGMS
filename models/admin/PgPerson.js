@@ -63,7 +63,6 @@ const PgPersonSchema = new mongoose.Schema({
       type:String,
       required:true
     },
-
     guardian_fullName:{
       type: String,
       required:true
@@ -117,6 +116,15 @@ const PgPersonSchema = new mongoose.Schema({
     guardian_zipcode:{
       type:String,
       required:true
+    },
+    payment_type:{
+      type:String
+    },
+    payment_status:{
+      type:String
+    },
+    payment_amount:{
+      type:String
     }
 });
 
