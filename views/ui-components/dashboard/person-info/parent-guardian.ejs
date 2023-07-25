@@ -120,6 +120,13 @@
                       <%= errorObj["person2-doc-front"] %>
                     </span>
                     <%}%>
+
+                    <%if(oldValue['person2-doc-front']){%>
+                      <div class="border border-gray-700 w-24 h-24 mt-3">
+                        <img src="/images/uploads<%=oldValue['person2-doc-front']%>" class="w-24 h-24 p-1"
+                          alt="<%=oldValue['person2-fullname']%>">
+                      </div>
+                      <%}%>
                 </div>
                 <div class="flex flex-col w-1/2 hidden">
                   <label for="person2-doc-back">Uploade Document(Back)</label>
@@ -131,6 +138,12 @@
                       <%= errorObj["person2-doc-back"] %>
                     </span>
                     <%}%>
+                    <%if(oldValue['person2-doc-back']){%>
+                      <div class="border border-gray-700 w-24 h-24 mt-3">
+                        <img src="/images/uploads<%=oldValue['person2-doc-back']%>" class="w-24 h-24 p-1"
+                          alt="<%=oldValue['person2-fullname']%>">
+                      </div>
+                      <%}%>
                 </div>
               </div>
             </div>

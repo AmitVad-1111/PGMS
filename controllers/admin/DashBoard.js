@@ -4,6 +4,7 @@ const fileUploads = require("../../utils/file-upload-helper");
 const { validationResult } = require("express-validator");
 const { sendSMS, verifyCode } = require("../../utils/send-sms");
 const pg_person = require("../../models/admin/PgPerson");
+const pg_payment = require("../../models/admin/PgPayment");
 
 const getCoutryDailCode = (c) => {
     if (Object.keys(getAllDialCode).length) {
@@ -186,18 +187,19 @@ const postNewPgPersonGuardianFrm = async (req, res, next) => {
         console.log(formatedNumber)
         // const r = await sendSMS(formatedNumber);
         // console.log(r);
-        return res.redirect("/dashboard/person/create-new/guardian-info");
+        req.session.step2.isCompleted = true;
+        return res.redirect("/dashboard/person/create-new/payment-info");
     } else {
         req.session.step2.isCompleted = true;
-        return res.redirect("/dashboard/person/create-new/payment");
+        return res.redirect("/dashboard/person/create-new/payment-info");
     }
 
     res.redirect("/dashboard/person/create-new/payment");
 }
 
 const getPaymentFrm = async (req, res, next) => {
-    try{
-        if(req.session.currentPeson == undefined){
+    try {
+        if (req.session.currentPeson == undefined && req.session.userInfo != undefined) {
             const pd = req.session.userInfo;
             const newPerson = new pg_person({
                 fullName: pd["person-fullname"],
@@ -229,33 +231,29 @@ const getPaymentFrm = async (req, res, next) => {
                 guardian_city: pd["person2-city"],
                 guardian_state: pd["person2-state"],
                 guardian_country: pd["person2-country"],
-                guardian_zipcode: pd["person2-zipcode"],
-                payment_type: "cash",
-                payment_status: "paid",
-                payment_amount: "12000"
+                guardian_zipcode: pd["person2-zipcode"]
             });
-        
+
             const row = await newPerson.save();
             console.log(row);
-            if(row._id){
+            if (row._id) {
                 req.session.currentPeson = row._id.toString();
             }
         }
-        
+
         renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
         });
-    }catch(err){
-        if(!err.stateCode){
+    } catch (err) {
+        if (!err.stateCode) {
             err.stateCode = 500;
         }
         throw new Error(err);
     }
 
-
 }
 
-const postPaymentFrm = (req,res,next) =>{
+const postPaymentFrm = async (req, res, next) => {
     const parseError = {};
 
     /**
@@ -276,8 +274,35 @@ const postPaymentFrm = (req,res,next) =>{
 
         return renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
+            errorObj: parseError,
+            oldValue: req.body,
         });
     }
+    if (req.session.currentPeson == undefined) {
+        return;
+    }
+
+    const payData = req.body;
+    const u = await pg_person.findOne({ _id: req.session.currentPeson });
+    console.log(u);
+    const paymnt = new pg_payment({
+        person_id: u,
+        payment_type: payData["payment-type"],
+        payment_status: payData["payment-status"],
+        payment_amount: payData["payment-amt"],
+        payment_currency: payData["payment-currency"],
+        transection_id: payData["payment-ref-id"],
+        additional_comment: payData["payment-comment"],
+    });
+
+    let p = await paymnt.save();
+    console.log(p);
+
+
+    return renderView(req, res, "pages/dashboard/pg-person/payment", {
+        pageTitle: "Add New Person",
+    });
+
 }
 
 const getStates = (req, res, next) => {

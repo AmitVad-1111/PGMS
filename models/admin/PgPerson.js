@@ -116,16 +116,12 @@ const PgPersonSchema = new mongoose.Schema({
     guardian_zipcode:{
       type:String,
       required:true
-    },
-    payment_type:{
-      type:String
-    },
-    payment_status:{
-      type:String
-    },
-    payment_amount:{
-      type:String
     }
+},{ 
+  timestamps: { 
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  } 
 });
 
 module.exports = mongoose.model("pg_user",PgPersonSchema);

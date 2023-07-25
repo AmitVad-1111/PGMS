@@ -22,7 +22,7 @@ const fileUplaodCustomLogic = (req, field, defaultError) => {
 }
 
 const personalInfoValidator = () => {
- return [
+  return [
     /*******************************************************
       Parsonal Form Validation
      *******************************************************/
@@ -187,7 +187,7 @@ const parentGuardianValidator = () => {
   ]
 }
 
-const paymentFormValidator = () =>{
+const paymentFormValidator = () => {
   return [
     body("payment-type").custom((value, { req }) => {
       if (value.trim() == "") {
@@ -195,14 +195,42 @@ const paymentFormValidator = () =>{
       }
       return true;
     }),
+    /* ----------------------------------------------------------------------------------- */
     body("payment-amt").custom((value, { req }) => {
       const amt = parseInt(value);
-      console.log(amt)
       if (!Number.isInteger(amt)) {
         throw new Error("Please enter valid payment amount")
       }
       return true;
-    })
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("payment-status").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please select payment status")
+      }
+      return true;
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("payment-currency").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please select payment status")
+      }
+      return true;
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("payment-ref-id").custom((value, { req }) => {
+      if (req.body["payment-type"] == "online" && value.trim() == "") {
+        throw new Error("Please enter transection referance id");
+      }
+      return true;
+    }),
+    /* ----------------------------------------------------------------------------------- */
+    body("payment-comment").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please enter payment summary");
+      }
+      return true;
+    }),
   ]
 }
 

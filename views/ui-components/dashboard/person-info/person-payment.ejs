@@ -8,29 +8,117 @@
           <div class="flex w-full">
             <div class="flex flex-col w-1/2 mr-10">
               <label for="payment-type">Payment Type</label>
-              <select class="border py-[9px] mt-2" name="payment-type" id="payment-type">
+              <select class="border py-[9px] mt-2  <%if(errorObj['payment-type']){%>border-red-700<%}%>" name="payment-type" id="payment-type">
                 <option value="">Select Payment Type</option>
                 <% Object.entries({'cash':'Cash','online':'Online'}).forEach(([key,val])=> {%>
-                  <option value="<%=key%>">
+                  <% if(oldValue['payment-type']==key) {%>
+                  <option value="<%=key%>" selected>
                     <%=val%>
                   </option>
-                <% }) %>
+                  <%}else{%>
+                    <option value="<%=key%>">
+                      <%=val%>
+                    </option>
+                <% }}) %>
               </select>
+              <%if(errorObj["payment-type"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["payment-type"] %>
+                </span>
+                <%}%>
             </div>
-
 
             <div class="flex flex-col w-1/2 mr-10">
               <label for="payment-amt">Payment Amount</label>
-              <input type="text" class="form-input border mt-2" name="payment-amt" id="payment-amt" value="">
+              <input 
+                type="text" 
+                class="form-input border mt-2 <%if(errorObj['payment-amt']){%>border-red-700<%}%>" 
+                name="payment-amt" 
+                id="payment-amt" value="<%if(oldValue['payment-amt']){%><%=oldValue['payment-amt']%><%}%>">
+            </div>
+            <%if(errorObj["payment-amt"]){%>
+              <span class="text-red-700">
+                <%= errorObj["payment-amt"] %>
+              </span>
+              <%}%>
+          </div>
+        </div>
+
+        <div class="flex w-full mt-5 items-center justify-between">
+          <div class="flex w-full">
+            <div class="flex flex-col w-1/2 mr-10">
+              <label for="payment-status">Payment Status</label>
+              <select class="border py-[9px] mt-2 <%if(errorObj['payment-status']){%>border-red-700<%}%>" name="payment-status" id="payment-status">
+                <option value="">Select Payment Status</option>
+                <% Object.entries({'paid':'Paid','pending':'Pending',}).forEach(([key,val])=> {%>
+                  <% if(oldValue['payment-status']==key) {%>
+                  <option value="<%=key%>" selected>
+                    <%=val%>
+                  </option>
+                  <%}else{%>
+                    <option value="<%=key%>">
+                      <%=val%>
+                    </option>
+                <% }}) %>
+              </select>
+              <%if(errorObj["payment-status"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["payment-status"] %>
+                </span>
+                <%}%>
+            </div>
+
+            <div class="flex flex-col w-1/2 mr-10">
+              <label for="payment-amt">Currency</label>
+              <select class="border py-[9px] mt-2 <%if(errorObj['payment-currency']){%>border-red-700<%}%>" name="payment-currency" id="payment-currency">
+                <option value="">Select Currency</option>
+                <% Object.entries({'inr':'INR','usd':'US Doller',}).forEach(([key,val])=> {%>
+                  <% if(oldValue['payment-currency']==key) {%>
+                  <option value="<%=key%>" selected>
+                    <%=val%>
+                  </option>
+                  <%}else{%>
+                    <option value="<%=key%>">
+                      <%=val%>
+                    </option>
+                <% }}) %>
+              </select>
+              <%if(errorObj["payment-currency"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["payment-currency"] %>
+                </span>
+                <%}%>
             </div>
 
           </div>
         </div>
+        
         <div class="flex flex-col w-1/2 mr-10 mt-3">
-          <label for="payment-amt">Additional Comment</label>
-          <textarea class="form-input border mt-2" name="payment-comment" id="payment-comment"
+          <label for="payment-amt">Transection Ref</label>
+          <input 
+            type="text" 
+            class="form-input border mt-2 <%if(errorObj['payment-ref-id']){%>border-red-700<%}%>" 
+            name="payment-ref-id" 
+            id="payment-ref-id" 
+            value="<%if(oldValue['payment-ref-id']){%><%=oldValue['payment-ref-id']%><%}%>">
+            <%if(errorObj["payment-ref-id"]){%>
+              <span class="text-red-700">
+                <%= errorObj["payment-ref-id"] %>
+              </span>
+              <%}%>
+        </div>
+        
+        <div class="flex flex-col w-1/2 mr-10 mt-3">
+          <label for="payment-amt">Pement Summary</label>
+          <textarea class="form-input border mt-2  <%if(errorObj['payment-comment']){%>border-red-700<%}%>" name="payment-comment" id="payment-comment"
             placeholder="eg. Rent for April month">
+            <%if(oldValue['payment-comment']){%><%=oldValue['payment-comment']%><%}%>
             </textarea>
+            <%if(errorObj["payment-comment"]){%>
+              <span class="text-red-700">
+                <%= errorObj["payment-comment"] %>
+              </span>
+              <%}%>
         </div>
         <div class="w-full text-end">
           <button next-step-btn class="
