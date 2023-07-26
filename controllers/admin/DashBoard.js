@@ -5,6 +5,7 @@ const { validationResult } = require("express-validator");
 const { sendSMS, verifyCode } = require("../../utils/send-sms");
 const pg_person = require("../../models/admin/PgPerson");
 const pg_payment = require("../../models/admin/PgPayment");
+const Person = require("../../utils/admin/person");
 
 const getCoutryDailCode = (c) => {
     if (Object.keys(getAllDialCode).length) {
@@ -31,7 +32,13 @@ const getAllPgPerson = (req, res, next) => {
     });
 }
 
-const getNewPgPersonFrm = (req, res, next) => {
+const getNewPgPersonFrm = async (req, res, next) => {
+    let userdata = null;
+    if (req.session.currentPerson) {
+        const p = new Person(req.session.currentPerson);
+        userdata = await p.getPersonalDetails();
+        console.log("page load user id: ",req.session.currentPerson);
+    }
 
     req.session.step1 = { isCompleted: req.session?.step1?.isCompleted || false };
 
@@ -41,7 +48,7 @@ const getNewPgPersonFrm = (req, res, next) => {
         pageTitle: "Add New Person",
         country: getAllCountry,
         states: country,
-        oldValue: req?.session?.userInfo || false,
+        oldValue: userdata || req?.session?.userInfo || false,
         isVerificationPending: true
     }
     if (req.session?.step1?.isCompleted) {
@@ -122,6 +129,8 @@ const postNewPgPersonFrm = async (req, res, next) => {
         });
     }
 
+
+
     /**
      * If no error then we reach here and we good to go 
      */
@@ -134,10 +143,20 @@ const postNewPgPersonFrm = async (req, res, next) => {
         // console.log(r);
         res.redirect("/dashboard/person/create-new/personal-info");
     } else {
-        req.session.step1.isCompleted = true;
+        /**
+         * check person is set or not
+         */
+        const person_id = req.session.currentPerson == undefined ? null : req.session.currentPerson;
+        console.log("person-id >>>> ", person_id);
+
+        const p = new Person(person_id);
+        let r = await p.addPersonalDetails(req.session.userInfo);
+         if(r){
+            req.session.currentPerson = r;
+         }
+         req.session.step1.isCompleted = true;
         res.redirect("/dashboard/person/create-new/guardian-info");
     }
-    console.log(req.session.userInfo);
 }
 
 const postNewPgPersonGuardianFrm = async (req, res, next) => {
@@ -199,6 +218,7 @@ const postNewPgPersonGuardianFrm = async (req, res, next) => {
 
 const getPaymentFrm = async (req, res, next) => {
     try {
+
         if (req.session.currentPeson == undefined && req.session.userInfo != undefined) {
             const pd = req.session.userInfo;
             const newPerson = new pg_person({
