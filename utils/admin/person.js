@@ -157,7 +157,7 @@ class Person {
           j.zipcode = pd["person-zipcode"]
 
           let isupdated = await j.save();
-          console.log("updated successfully:>>>>>>>>>>>>>>>",isupdated);
+          console.log("updated successfully:>>>>>>>>>>>>>",isupdated);
         }
 
       } catch (err) {
