@@ -35,12 +35,13 @@
                 class="form-input border mt-2 <%if(errorObj['payment-amt']){%>border-red-700<%}%>" 
                 name="payment-amt" 
                 id="payment-amt" value="<%if(oldValue['payment-amt']){%><%=oldValue['payment-amt']%><%}%>">
+                <%if(errorObj["payment-amt"]){%>
+                  <span class="text-red-700">
+                    <%= errorObj["payment-amt"] %>
+                  </span>
+                  <%}%>
             </div>
-            <%if(errorObj["payment-amt"]){%>
-              <span class="text-red-700">
-                <%= errorObj["payment-amt"] %>
-              </span>
-              <%}%>
+            
           </div>
         </div>
 
@@ -120,7 +121,16 @@
               </span>
               <%}%>
         </div>
-        <div class="w-full text-end">
+        <div class="w-full flex justify-between">
+            <a prev-step-btn href="/dashboard/person/create-new/guardian-info" class="
+              bg-purple-700
+              px-4
+              py-3
+              mt-10
+              text-white
+            ">
+              Previous
+            </a>
           <button next-step-btn class="
             bg-purple-700
             px-4

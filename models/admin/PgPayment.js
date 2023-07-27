@@ -42,4 +42,11 @@ const pgPaymentSchema = mongoose.Schema({
     } 
 });
 
+pgPaymentSchema.static("getPaymentByUserId", async function(id){
+  if(id){
+    return await mongoose.model("pg_payment").find({person_id:id});
+  }
+  return null;
+})
+
 module.exports = mongoose.model("pg_payment",pgPaymentSchema);

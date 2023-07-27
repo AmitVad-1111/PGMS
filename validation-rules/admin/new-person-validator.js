@@ -1,4 +1,5 @@
 const { body, check } = require("express-validator");
+const PgPerson = require("../../models/admin/PgPerson");
 
 const fileUplaodCustomLogic = (req, field, defaultError) => {
   const uploadFiles = req.files == undefined ? null : JSON.parse(JSON.stringify(req?.files));
@@ -36,7 +37,15 @@ const personalInfoValidator = () => {
       .withMessage("Please enter valid Name"),
 
     /* ----------------------------------------------------------------------------------- */
-    body("person-email").isEmail().withMessage("Please enter valid email"),
+    body("person-email").isEmail().withMessage("Please enter valid email").custom(async (value, { req }) => {
+
+      const chk = await PgPerson.findOne({ email: value }).countDocuments();
+      console.log("Is Already Registered : ", chk);
+      if (chk > 0) {
+        throw new Error("Someone already registered with this email");
+      }
+      return true
+    }),
     /* ----------------------------------------------------------------------------------- */
     body("person-gender").custom((value, { req }) => {
       if (value.trim() == "") {

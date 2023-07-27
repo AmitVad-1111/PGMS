@@ -58,8 +58,14 @@ const getNewPgPersonFrm = async (req, res, next) => {
 
 }
 
-const getNewPgPersonGuardianFrm = (req, res, next) => {
-    console.log(req.session.userInfo);
+const getNewPgPersonGuardianFrm = async (req, res, next) => {
+    let userdata = null;
+    if (req.session.currentPerson) {
+        const p = new Person(req.session.currentPerson);
+        userdata = await p.getGuardianDetails();
+        console.log("page load user id: ",req.session.currentPerson);
+    }
+
     // if (req.session?.step1 && req.session?.step1.isCompleted == false) {
     //     return res.redirect("/dashboard/person/create-new/personal-info");
     // }else if(req.session.userInfo == undefined){
@@ -85,7 +91,7 @@ const getNewPgPersonGuardianFrm = (req, res, next) => {
         pageTitle: "Add New Person",
         country: getAllCountry,
         states: country,
-        oldValue: req?.session?.userInfo || false,
+        oldValue: req?.session?.userInfo || userdata || false,
         isVerificationPending: true
     }
     if (req.session?.step2?.isCompleted) {
@@ -130,7 +136,6 @@ const postNewPgPersonFrm = async (req, res, next) => {
     }
 
 
-
     /**
      * If no error then we reach here and we good to go 
      */
@@ -147,7 +152,6 @@ const postNewPgPersonFrm = async (req, res, next) => {
          * check person is set or not
          */
         const person_id = req.session.currentPerson == undefined ? null : req.session.currentPerson;
-        console.log("person-id >>>> ", person_id);
 
         const p = new Person(person_id);
         let r = await p.addPersonalDetails(req.session.userInfo);
@@ -196,73 +200,47 @@ const postNewPgPersonGuardianFrm = async (req, res, next) => {
     /**
      * If no error then we reach here and we good to go 
      */
-    console.log(req.session.userInfo);
     if (req.session.userInfo['person2-mobile-verified'] == undefined || req.session.userInfo['person2-mobile-verified'] == false) {
         // req.session.userInfo['person2-mobile-verified'] = false;
 
         req.session.userInfo['person2-mobile-verified'] = true;
 
         const formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
-        console.log(formatedNumber)
         // const r = await sendSMS(formatedNumber);
         // console.log(r);
-        req.session.step2.isCompleted = true;
-        return res.redirect("/dashboard/person/create-new/payment-info");
+        return res.redirect("/dashboard/person/create-new/guardian-info");
     } else {
+        /**
+         * check person is set or not
+         */
+        const person_id = req.session.currentPerson == undefined ? null : req.session.currentPerson;
+
+        const p = new Person(person_id);
+        let r = await p.addEditGuardianDetails(req.session.userInfo);
+
         req.session.step2.isCompleted = true;
         return res.redirect("/dashboard/person/create-new/payment-info");
     }
 
-    res.redirect("/dashboard/person/create-new/payment");
 }
 
 const getPaymentFrm = async (req, res, next) => {
+    console.log("user id:", req.session.currentPerson);
+    /**
+     * If user direct request this page then check if user completed previous steps
+     * if not completed then redirect user to the first step 
+     */
+    if(req.session.currentPerson == undefined){
+        res.redirect("/dashboard/person/create-new/personal-info");
+    }
+    
     try {
-
-        if (req.session.currentPeson == undefined && req.session.userInfo != undefined) {
-            const pd = req.session.userInfo;
-            const newPerson = new pg_person({
-                fullName: pd["person-fullname"],
-                email: pd["person-email"],
-                gender: pd["person-gender"],
-                dob: new Date(pd["person-dob"]),
-                doc_type: pd["person-doc-type"],
-                doc_front: pd["person-doc-front"],
-                doc_back: pd["person-doc-back"] || '',
-                profile_image: pd["person-image"],
-                mobile_no: pd["person-mobile"],
-                is_mobile_verified: pd["person-mobile-verified"],
-                address_line1: pd["person-address-ln1"],
-                address_line2: pd["person-address-ln2"],
-                city: pd["person-city"],
-                state: pd["person-state"],
-                country: pd["person-country"],
-                zipcode: pd["person-zipcode"],
-                guardian_fullName: pd["person2-fullname"],
-                guardian_email: pd["person2-email"],
-                guardian_gender: pd["person2-gender"],
-                guardian_doc_type: pd["person2-doc-type"],
-                guardian_doc_front: pd["person2-doc-front"],
-                guardian_doc_back: pd["person2-doc-back"] || '',
-                guardian_mobile_no: pd["person2-mobile"],
-                guardian_is_mobile_verified: pd["person2-mobile-verified"],
-                guardian_address_line1: pd["person2-address-ln1"],
-                guardian_address_line2: pd["person2-address-ln2"],
-                guardian_city: pd["person2-city"],
-                guardian_state: pd["person2-state"],
-                guardian_country: pd["person2-country"],
-                guardian_zipcode: pd["person2-zipcode"]
-            });
-
-            const row = await newPerson.save();
-            console.log(row);
-            if (row._id) {
-                req.session.currentPeson = row._id.toString();
-            }
-        }
-
+        const person = new Person(req.session.currentPerson || null);
+        const payData = await person.getPaymentInfo();
+       
         renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
+            oldValue : payData[0] || false
         });
     } catch (err) {
         if (!err.stateCode) {
@@ -290,21 +268,21 @@ const postPaymentFrm = async (req, res, next) => {
             parseError[err.path] = err.msg;
         });
 
-        console.log(allError);
-
         return renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
             errorObj: parseError,
             oldValue: req.body,
         });
     }
-    if (req.session.currentPeson == undefined) {
-        return;
+
+    if (req.session.currentPerson == undefined) {
+        const err = Error("User not found");
+        err.stateCode = 404;
+        throw err;
     }
 
     const payData = req.body;
-    const u = await pg_person.findOne({ _id: req.session.currentPeson });
-    console.log(u);
+    const u = await pg_person.findOne({ _id: req.session.currentPerson });
     const paymnt = new pg_payment({
         person_id: u,
         payment_type: payData["payment-type"],
@@ -318,9 +296,9 @@ const postPaymentFrm = async (req, res, next) => {
     let p = await paymnt.save();
     console.log(p);
 
-
     return renderView(req, res, "pages/dashboard/pg-person/payment", {
         pageTitle: "Add New Person",
+        oldValue: payData || false
     });
 
 }

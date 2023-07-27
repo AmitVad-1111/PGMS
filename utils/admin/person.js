@@ -1,4 +1,5 @@
 const PgPerson = require("../../models/admin/PgPerson");
+const PgPayment = require("../../models/admin/PgPayment");
 
 function formatDate(date) {
   let m = date.getMonth() + 1;
@@ -54,8 +55,7 @@ class Person {
       /**
        * Check this person already registered
        */
-      const j = await PgPerson.findOne({ mobile_no: pd["person-mobile"] });
-      if (!j) {
+      if (this.personId == null) {
         const p = new PgPerson({
           fullName: pd["person-fullname"],
           email: pd["person-email"],
@@ -87,10 +87,7 @@ class Person {
 
       } else {
         //update the person with new data
-        if(j){
-          this.personId = j._id;
-          this.editPersonalDetails(this.personId,pd);
-        }
+        this.editPersonalDetails(pd);
       }
 
 
@@ -134,10 +131,10 @@ class Person {
   /**
    * Edit Person Details
    */
-  async editPersonalDetails(id, pd) {
-    if (id) {
+  async editPersonalDetails(pd) {
+    if (this.personId) {
       try {
-        const j = await PgPerson.findById(id);
+        const j = await PgPerson.findById(this.personId);
         if (j) {
           j.fullName = pd["person-fullname"]
           j.email = pd["person-email"]
@@ -157,7 +154,7 @@ class Person {
           j.zipcode = pd["person-zipcode"]
 
           let isupdated = await j.save();
-          console.log("updated successfully:>>>>>>>>>>>>>",isupdated);
+          console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
         }
 
       } catch (err) {
@@ -166,6 +163,96 @@ class Person {
     } else {
       throw new Error("Please provide user id");
     }
+  }
+
+  /**
+   * Add or edit gaurdian details
+   */
+  async addEditGuardianDetails(pd) {
+    if (this.personId) {
+      try {
+        const j = await PgPerson.findById(this.personId);
+        console.log("addEditGuardianDetails >>>>>>>>", j)
+        if (j) {
+          j.guardian_fullName = pd["person2-fullname"]
+          j.guardian_email = pd["person2-email"]
+          j.guardian_gender = pd["person2-gender"]
+          j.guardian_dob = new Date(pd["person2-dob"])
+          j.guardian_doc_type = pd["person2-doc-type"]
+          j.guardian_doc_front = pd["person2-doc-front"]
+          j.guardian_doc_back = pd["person2-doc-back"] || ''
+          j.guardian_profile_image = pd["person2-image"]
+          j.guardian_mobile_no = pd["person2-mobile"]
+          j.guardian_is_mobile_verified = pd["person2-mobile-verified"]
+          j.guardian_address_line1 = pd["person2-address-ln1"]
+          j.guardian_address_line2 = pd["person2-address-ln2"]
+          j.guardian_city = pd["person2-city"]
+          j.guardian_state = pd["person2-state"]
+          j.guardian_country = pd["person2-country"]
+          j.guardian_zipcode = pd["person2-zipcode"]
+
+          let isupdated = await j.save();
+          console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
+        }
+
+      } catch (err) {
+        throw new Error(err);
+      }
+    } else {
+      throw new Error("Please provide user id");
+    }
+  }
+
+  async getGuardianDetails() {
+    if (this.personId) {
+      try {
+        const gp = await PgPerson.findById(this.personId);
+        if (gp) {
+          this.guardianDetails = {
+            "person2-fullname": gp.guardian_fullName,
+            "person2-email": gp.guardian_email,
+            "person2-gender": gp.guardian_gender,
+            "person2-doc-type": gp.guardian_doc_type,
+            "person2-doc-front": gp.guardian_doc_front,
+            "person2-doc-back": gp.guardian_doc_back,
+            "person2-mobile": gp.guardian_mobile_no,
+            "person2-mobile-verified": gp.guardian_is_mobile_verified,
+            "person2-address-ln1": gp.guardian_address_line1,
+            "person2-address-ln2": gp.guardian_address_line2,
+            "person2-city": gp.guardian_city,
+            "person2-state": gp.guardian_state,
+            "person2-country": gp.guardian_country,
+            "person2-zipcode": gp.guardian_zipcode,
+          }
+          return this.guardianDetails;
+        }
+
+      } catch (err) {
+        throw new Error(err);
+      }
+    }
+  }
+
+  /**
+   * Get Payment Info
+   */
+  async getPaymentInfo() {
+    if (this.personId == null) {
+      return null;
+    }
+    let p = await PgPayment.getPaymentByUserId(this.personId);
+    let data = [];
+    p.length && p.forEach(function (py) {
+      data.push({
+        "payment-type": py.payment_type,
+        "payment-status": py.payment_status,
+        "payment-amt": py.payment_amount,
+        "payment-currency": py.payment_currency,
+        "payment-ref-id": py.transection_id,
+        "payment-comment": py.additional_comment
+      })
+    })
+    return data || null;
   }
 }
 
