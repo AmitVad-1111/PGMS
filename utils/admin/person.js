@@ -1,5 +1,6 @@
 const PgPerson = require("../../models/admin/PgPerson");
 const PgPayment = require("../../models/admin/PgPayment");
+const Payments = require("../../utils/admin/payments");
 
 function formatDate(date) {
   let m = date.getMonth() + 1;
@@ -11,6 +12,7 @@ function formatDate(date) {
 class Person {
   constructor(personid = null) {
     this.personId = personid;
+    this.payment = new Payments(this.personId);
     this.personDetails = {
       "person-fullname": "",
       "person-email": "",
@@ -253,6 +255,59 @@ class Person {
       })
     })
     return data || null;
+  }
+
+  /*************************************************
+   * Get list of person
+   *************************************************/
+  async getAllPgPerson() {
+    try {
+      let alldata = [];
+      const gapp = await PgPerson.find().select("_id fullName profile_image city mobile_no guardian_mobile_no created_at").populate("person_payments", "payment_status created_at").populate("person_deposit", "payment_status");
+      if (gapp?.length) {
+        gapp.forEach(p => {
+          alldata.push({
+            id: p._id,
+            fullName: p.fullName,
+            profile_image: p.profile_image,
+            city: p.city,
+            mobile_no: p.mobile_no,
+            guardian_mobile_no: p.guardian_mobile_no,
+            created_at: new Date(p.created_at).toLocaleDateString(),
+            isDepositPaid: p?.person_deposit?.payment_status == "paid" ? true : false
+          })
+        });
+        return alldata;
+      }
+      return gapp
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async makePayment(pd) {
+    if (this.personId == null) return null;
+
+    try {
+      const paymentData = await this.payment.addNewPayments(pd);
+      if (paymentData?.id) {
+        const user = await PgPerson.findById(this.personId);
+        if (user) {
+          if (paymentData.paytype == "rent") {
+            user.person_payments.push(paymentData.id);
+          }
+          if (paymentData.paytype == "deposit") {
+            user.person_deposit = paymentData.id
+          }
+          return user.save();
+        }
+        return false;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 }
 

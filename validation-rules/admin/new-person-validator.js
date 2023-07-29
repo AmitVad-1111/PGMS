@@ -227,6 +227,13 @@ const paymentFormValidator = () => {
       return true;
     }),
     /* ----------------------------------------------------------------------------------- */
+    body("payment-for").custom((value, { req }) => {
+      if (value.trim() == "") {
+        throw new Error("Please select payment for")
+      }
+      return true;
+    }),
+    /* ----------------------------------------------------------------------------------- */
     body("payment-ref-id").custom((value, { req }) => {
       if (req.body["payment-type"] == "online" && value.trim() == "") {
         throw new Error("Please enter transection referance id");

@@ -26,14 +26,28 @@ const getDashBoard = (req, res, next) => {
     });
 }
 
-const getAllPgPerson = (req, res, next) => {
+const getAllPgPerson = async (req, res, next) => {
+    const p = new Person();
+    const gpPgUser = await p.getAllPgPerson();
     renderView(req, res, "pages/dashboard/pg-person/person", {
-        pageTitle: "PG Persons"
+        pageTitle: "PG Persons",
+        persons: gpPgUser || false
     });
 }
 
 const getNewPgPersonFrm = async (req, res, next) => {
     let userdata = null;
+    
+    if(req.query?.is == "new"){
+        delete req.session.userInfo;
+        delete req.session.uploadFiles;
+        delete req.session.currentPerson;
+        delete req.session.step1;
+        delete req.session.step2;
+        delete req.session.step3;
+        delete req.session.step4;
+    }
+
     if (req.session.currentPerson) {
         const p = new Person(req.session.currentPerson);
         userdata = await p.getPersonalDetails();
@@ -65,14 +79,6 @@ const getNewPgPersonGuardianFrm = async (req, res, next) => {
         userdata = await p.getGuardianDetails();
         console.log("page load user id: ",req.session.currentPerson);
     }
-
-    // if (req.session?.step1 && req.session?.step1.isCompleted == false) {
-    //     return res.redirect("/dashboard/person/create-new/personal-info");
-    // }else if(req.session.userInfo == undefined){
-    //     return res.redirect("/dashboard/person/create-new/personal-info");
-    // } else if (req.session.userInfo && req.session.userInfo['person-mobile-verified'] == false) {
-    //     return res.redirect("/dashboard/person/create-new/personal-info");
-    // }
 
     if (
         (req.session?.step1 && req.session?.step1.isCompleted == false) ||
@@ -235,8 +241,9 @@ const getPaymentFrm = async (req, res, next) => {
     }
     
     try {
+        // let payData = [];
         const person = new Person(req.session.currentPerson || null);
-        const payData = await person.getPaymentInfo();
+        let payData = await person.getPaymentInfo();
        
         renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
@@ -281,27 +288,32 @@ const postPaymentFrm = async (req, res, next) => {
         throw err;
     }
 
-    const payData = req.body;
-    const u = await pg_person.findOne({ _id: req.session.currentPerson });
-    const paymnt = new pg_payment({
-        person_id: u,
-        payment_type: payData["payment-type"],
-        payment_status: payData["payment-status"],
-        payment_amount: payData["payment-amt"],
-        payment_currency: payData["payment-currency"],
-        transection_id: payData["payment-ref-id"],
-        additional_comment: payData["payment-comment"],
-    });
+    let payData = req.body;
+    let paymentadded = false;
 
-    let p = await paymnt.save();
-    console.log(p);
+    let cperson = new Person(req.session.currentPerson);
+    let p = await cperson.makePayment(req.body);
+    if(p){
+        paydata = false;
+        paymentadded = true
+    }
 
     return renderView(req, res, "pages/dashboard/pg-person/payment", {
         pageTitle: "Add New Person",
-        oldValue: payData || false
+        oldValue: payData || false,
+        paymentadded: paymentadded
     });
 
 }
+
+const getEditPerson = (req,res,next) =>{
+    console.log(req.params);
+    return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+        pageTitle: "Edit Person",
+    });
+    
+}
+
 
 const getStates = (req, res, next) => {
     try {
@@ -374,6 +386,7 @@ module.exports = {
     postNewPgPersonGuardianFrm,
     getPaymentFrm,
     postPaymentFrm,
+    getEditPerson,
     getStates,
     postVerifyCode
 }

@@ -92,6 +92,14 @@ const PgPersonSchema = new mongoose.Schema({
   guardian_zipcode: {
     type: String,
   },
+  person_payments:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"pg_payment"
+  }],
+  person_deposit:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"pg_payment"
+  },
   room_number: {
     type: String
   }

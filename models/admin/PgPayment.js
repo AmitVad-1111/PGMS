@@ -1,17 +1,9 @@
 const mongoose = require("mongoose");
-/**
- * userid
- * payment type
- * payment status
- * payment amount
- * payment currency
- * transection id (in case online payment)
- * additional comment
- */
+
 const pgPaymentSchema = mongoose.Schema({
   person_id : {
     type: mongoose.Schema.Types.ObjectId,
-    ref:"pg_users"
+    ref:"pg_user"
   },
   payment_type:{
     type: String,
@@ -28,6 +20,12 @@ const pgPaymentSchema = mongoose.Schema({
   payment_currency:{
     type:String,
     required:true
+  },
+  is_rent:{
+    type:Boolean
+  },
+  is_deposit:{
+    type:Boolean
   },
   transection_id:{
     type:String,
