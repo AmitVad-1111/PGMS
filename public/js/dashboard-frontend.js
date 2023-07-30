@@ -141,7 +141,7 @@ const createPersonScript = () => {
         }
 
         const disableSubmit = (isDisabled = true) => {
-            submitBtn.setAttribute("disabled",isDisabled);
+            submitBtn.setAttribute("disabled", isDisabled);
             submitBtn.style.cursor = isDisabled ? "not-allowed" : "pointer";
         }
 
@@ -183,18 +183,18 @@ const createPersonScript = () => {
 
                 vcode.value = '';
                 // closePopup();
-                
-                if(currentPath.length && currentPath.includes("personal-info")){
+
+                if (currentPath.length && currentPath.includes("personal-info")) {
                     currentPath.pop("personal-info");
                     currentPath.push("guardian-info");
                     window.location.href = currentPath.join("/")
-                }else{
+                } else {
                     currentPath.length && currentPath.includes("guardian-info");
                     currentPath.pop("guardian-info");
                     currentPath.push("payment-info");
                     window.location.href = currentPath.join("/");
                 }
-            }else{
+            } else {
                 showLoader(true);
                 disableSubmit(false);
                 showVerifed(true);
@@ -203,6 +203,36 @@ const createPersonScript = () => {
         }
 
     })
+}
+
+const customTab = () =>{
+    const tabContainer = document.querySelector(`[data-tabs-container]`);
+    const tabs = document.querySelector(`[data-tabs-container] [data-tabs]`);
+    if(tabs){
+        tabs.querySelectorAll("li").forEach(el=>{
+            el.addEventListener("click",(e)=>{
+                const id = e.target.dataset.tabid;
+                const tabDiv = document.querySelector(id);
+
+                const allTabConent = tabContainer.querySelectorAll(`[data-tabcontent]`);
+                
+                if(allTabConent.length) {
+                    allTabConent.forEach(el => {
+                        el.classList.add("hidden");
+                    });
+
+                    tabs.querySelectorAll("li").forEach(el => {
+                        el.classList.add("bg-gray-100","border-b-0");
+                        el.classList.remove("bg-white","border-b-[3px]","border-b-purple-700");
+                    })
+                    tabDiv.classList.remove("hidden");
+                    e.target.classList.add("bg-white","border-b-[3px]","border-b-purple-700");
+                    e.target.classList.remove("bg-gray-100","border-b-0");
+                }
+                
+            })
+        })
+    }
 }
 
 function main() {
@@ -214,10 +244,26 @@ function main() {
         "/dashboard/person/create-new/guardian-info": () => {
             createPersonScript();
         },
+        "/dashboard/person/edit": () => {
+            createPersonScript();
+            customTab();
+        }
     }
 
     if (Object.keys(callDict).includes(pathName)) {
         typeof callDict[pathName] == "function" && callDict[pathName].call();
+    }else{
+        if(Object.keys(callDict).length){
+            const checkUrlPattern = (url) => {
+                let pattern = `(${url.replaceAll("/","\/")})+`; 
+                let tergetPattern = new RegExp(pattern);
+                return tergetPattern.test(window.location.pathname);
+             }
+            let targetUrl = Object.keys(callDict).find(checkUrlPattern);
+            if(targetUrl){
+                typeof callDict[targetUrl] == "function" && callDict[targetUrl].call();
+            }
+        }
     }
 }
 

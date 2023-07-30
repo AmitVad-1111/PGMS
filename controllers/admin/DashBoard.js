@@ -1,7 +1,7 @@
 const renderView = require("../../utils/helpers");
 const { getAllCountry, getAllStates, getAllDialCode } = require("../../utils/state-country");
 const fileUploads = require("../../utils/file-upload-helper");
-const { validationResult } = require("express-validator");
+const { validationResult, body } = require("express-validator");
 const { sendSMS, verifyCode } = require("../../utils/send-sms");
 const pg_person = require("../../models/admin/PgPerson");
 const pg_payment = require("../../models/admin/PgPayment");
@@ -307,11 +307,27 @@ const postPaymentFrm = async (req, res, next) => {
 }
 
 const getEditPerson = (req,res,next) =>{
-    console.log(req.params);
+    const uid = req.params.uid;
     return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
         pageTitle: "Edit Person",
+        country: getAllCountry,
+        states: false,
+        oldValue : false,
+        pid:uid
     });
     
+}
+
+const postEditPerson = (req,res,next) =>{
+    console.log(req.body);
+    return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+        pageTitle: "Edit Person",
+        country: getAllCountry,
+        states: false,
+        oldValue : false,
+        pid:uid
+    });
+   
 }
 
 
@@ -352,10 +368,8 @@ const postVerifyCode = async (req, res, next) => {
         if (response == "approved") {
             if (req.session.userInfo['person-mobile-verified']) {
                 req.session.userInfo['person2-mobile-verified'] = true;
-                req.session.step2.isCompleted = true;
             } else {
                 req.session.userInfo['person-mobile-verified'] = true;
-                req.session.step1.isCompleted = true;
             }
             res.send(JSON.stringify({
                 success: true,
@@ -387,6 +401,7 @@ module.exports = {
     getPaymentFrm,
     postPaymentFrm,
     getEditPerson,
+    postEditPerson,
     getStates,
     postVerifyCode
 }

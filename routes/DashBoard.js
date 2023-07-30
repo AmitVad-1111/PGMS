@@ -13,7 +13,8 @@ const {
    postPaymentFrm,
    getStates,
    postVerifyCode,
-   getEditPerson
+   getEditPerson,
+   postEditPerson
 } = require("../controllers/admin/DashBoard");
 
 const uploadFields = [
@@ -37,6 +38,7 @@ router.get("/person/create-new/payment-info", getPaymentFrm);
 router.post("/person/create-new/payment-info", fileUploads.none(), paymentFormValidator(), postPaymentFrm);
 
 router.get("/person/edit/:uid",getEditPerson)
+router.post("/person/edit/personal",postEditPerson)
 
 // Ajax Routes
 router.post("/states", getStates);

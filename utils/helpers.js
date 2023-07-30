@@ -13,20 +13,18 @@ const renderViews = (reqObj,resobj,view,payload) =>{
         }
 
         let viewDefaults =  {
-            // "pages/login": {
-            //     pageTitle: '',
-            //     errorObj:'',
-            //     successMsg:'',
-            //     user:'',
-            //     oldValue:''
-            // },
-
-            // "pages/signup":{
-            //     pageTitle: '',
-            // },
-
+            "pages/dashboard/pg-person/create-person":{
+                isedit:false
+            },
+            "pages/dashboard/pg-person/person-guardian":{
+                isedit:false
+            },
             "pages/dashboard/pg-person/payment":{
                 paymentadded: false
+            },
+            "pages/dashboard/pg-person/editPerson":{
+                isVerificationPending: true,
+                currentTab:"personal"
             }
         }
 

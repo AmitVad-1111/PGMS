@@ -242,17 +242,23 @@
               </div>
             </div>
 
+            <% if(isedit) {%>
+              <input type="hidden" name="pid" value="<%=pid%>">
+              <input type="hidden" name="type" value="2">
+            <% }%>
 
             <div class="w-full flex justify-between">
-              <a prev-step-btn href="/dashboard/person/create-new/personal-info" class="
-                bg-purple-700
-                px-4
-                py-3
-                mt-10
-                text-white
-              ">
-                Previous
-              </a>
+              <% if(!isedit) {%>
+                <a prev-step-btn href="/dashboard/person/create-new/personal-info" class="
+                  bg-purple-700
+                  px-4
+                  py-3
+                  mt-10
+                  text-white
+                ">
+                  Previous
+                </a>
+              <% }%>
               <button next-step-btn class="
                 bg-purple-700
                 px-4
@@ -260,7 +266,7 @@
                 mt-10
                 text-white
               ">
-                Next
+              <% if(isedit) {%>Save<% }else{ %>Next<%}%>
               </button>
             </div>
           </div>

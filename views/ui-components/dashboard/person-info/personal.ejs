@@ -276,6 +276,11 @@
               <%}%>
           </div>
         </div>
+
+        <% if(isedit) {%>
+          <input type="hidden" name="pid" value="<%=pid%>">
+          <input type="hidden" name="type" value="1">
+        <% }%>
         
         <div class="w-full text-end">
           <button next-step-btn class="
@@ -285,12 +290,13 @@
               mt-10
               text-white
             ">
-            Next
+            <% if(isedit) {%>Save<% }else{ %>Next<%}%>
           </button>
         </div>
       </div>
     </form>
   </div>
+</div>
 
   
  
