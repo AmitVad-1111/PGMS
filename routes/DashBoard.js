@@ -1,5 +1,6 @@
 const express = require("express");
 const fileUploads = require("../utils/file-upload-helper");
+const setCurrentUser = require("../middelware/set-current");
 const { personalInfoValidator, parentGuardianValidator, paymentFormValidator } = require("../validation-rules/admin/new-person-validator");
 const router = express.Router();
 const {
@@ -14,7 +15,9 @@ const {
    getStates,
    postVerifyCode,
    getEditPerson,
-   postEditPerson
+   postEditPerson,
+   getEditGuardian,
+   postEditGurdian
 } = require("../controllers/admin/DashBoard");
 
 const uploadFields = [
@@ -37,11 +40,14 @@ router.post("/person/create-new/guardian-info", fileUploads.fields(uploadFields)
 router.get("/person/create-new/payment-info", getPaymentFrm);
 router.post("/person/create-new/payment-info", fileUploads.none(), paymentFormValidator(), postPaymentFrm);
 
-router.get("/person/edit/:uid",getEditPerson)
-router.post("/person/edit/personal",postEditPerson)
+router.get("/person/edit/personal",setCurrentUser,getEditPerson);
+router.post("/person/edit/personal",fileUploads.fields(uploadFields), personalInfoValidator(),postEditPerson)
+
+router.get("/person/edit/guardian",setCurrentUser,getEditGuardian);
+router.post("/person/edit/guardian",fileUploads.fields(uploadFields), parentGuardianValidator(),postEditGurdian)
 
 // Ajax Routes
 router.post("/states", getStates);
-router.post("/verifycode", postVerifyCode);
+router.post("/verifycode",postVerifyCode);
 
 module.exports = router;

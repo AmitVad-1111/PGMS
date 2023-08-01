@@ -1,6 +1,6 @@
 <div class="mt-5" data-content-section>
   <div data-section-personal>
-    <form method="post" name="add_new_person_1" class="is-active" enctype="multipart/form-data">
+    <form method="post" name="add_new_person_1" <% if(isedit) {%>action="/dashboard/person/edit/personal/?uid=<%=pid%>"<%}%> class="is-active" enctype="multipart/form-data">
       <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
         <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Personal Details</h4>
 
@@ -279,7 +279,7 @@
 
         <% if(isedit) {%>
           <input type="hidden" name="pid" value="<%=pid%>">
-          <input type="hidden" name="type" value="1">
+          <input type="hidden" name="mode" value="edit">
         <% }%>
         
         <div class="w-full text-end">

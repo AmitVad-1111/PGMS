@@ -24,7 +24,8 @@ const renderViews = (reqObj,resobj,view,payload) =>{
             },
             "pages/dashboard/pg-person/editPerson":{
                 isVerificationPending: true,
-                currentTab:"personal"
+                currentTab:"personal",
+                successMsg: false
             }
         }
 

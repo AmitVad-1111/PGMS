@@ -39,10 +39,16 @@ const personalInfoValidator = () => {
     /* ----------------------------------------------------------------------------------- */
     body("person-email").isEmail().withMessage("Please enter valid email").custom(async (value, { req }) => {
 
-      const chk = await PgPerson.findOne({ email: value }).countDocuments();
-      console.log("Is Already Registered : ", chk);
-      if (chk > 0) {
-        throw new Error("Someone already registered with this email");
+      const chk = await PgPerson.findOne({ email: value });
+      if (chk) {
+        const mode = req.body?.mode || null;
+        if (mode) {
+          if (mode == "edit" && req.body.pid != chk._id.toString()) {
+            throw new Error("Someone already registered with this email");
+          }
+        } else {
+          throw new Error("Someone already registered with this email");
+        }
       }
       return true
     }),
@@ -105,17 +111,34 @@ const personalInfoValidator = () => {
     body("person-zipcode", "Please enter valid zipcode").isLength({ min: 1, max: 6 }).isAlphanumeric(),
     /* ----------------------------------------------------------------------------------- */
     check("person-image").custom((value, { req }) => {
-      return fileUplaodCustomLogic(req, "person-image", "Profile image reqired");
+      const mode = req.body?.mode || undefined;
+      if (mode && mode == "edit" && req.session?.userInfo["person-image"] == "") {
+        return fileUplaodCustomLogic(req, "person-image", "Profile image reqired");
+      } else if (mode == undefined) {
+        return fileUplaodCustomLogic(req, "person-image", "Profile image reqired");
+      }
+      return true;
     }),
     /* ----------------------------------------------------------------------------------- */
     check("person-doc-front").custom((value, { req }) => {
-      return fileUplaodCustomLogic(req, "person-doc-front", "Please upload ID document");
+      const mode = req.body?.mode || undefined;
+      if (mode && mode == "edit" && req.session?.userInfo["person-image"] == "") {
+        return fileUplaodCustomLogic(req, "person-doc-front", "Please upload ID document");
+      } else if (mode == undefined) {
+        return fileUplaodCustomLogic(req, "person-doc-front", "Please upload ID document");
+      }
+      return true;
     }),
 
     /* ----------------------------------------------------------------------------------- */
     check("person-doc-back").custom((value, { req }) => {
       if (req.body["person-doc-type"] == "aadhar") {
-        return fileUplaodCustomLogic(req, "person-doc-back", "Please upload ID document");
+        const mode = req.body?.mode || undefined;
+        if (mode && mode == "edit" && req.session?.userInfo["person-image"] == "") {
+          return fileUplaodCustomLogic(req, "person-doc-back", "Please upload ID document");
+        } else if (mode == undefined) {
+          return fileUplaodCustomLogic(req, "person-doc-back", "Please upload ID document");
+        }
       }
       return true;
     })
@@ -183,13 +206,25 @@ const parentGuardianValidator = () => {
     body("person2-zipcode", "Please enter valid zipcode").isLength({ min: 1, max: 6 }).isAlphanumeric(),
     /* ----------------------------------------------------------------------------------- */
     check("person2-doc-front").custom((value, { req }) => {
-      return fileUplaodCustomLogic(req, "person2-doc-front", "Please upload ID document");
+      const mode = req.body?.mode || undefined;
+      if (mode && mode == "edit" && req.session?.userInfo["person2-doc-front"] == "") {
+        return fileUplaodCustomLogic(req, "person2-doc-front", "Please upload ID document");
+      } else if (mode == undefined) {
+        return fileUplaodCustomLogic(req, "person2-doc-front", "Please upload ID document");
+      }
+      return true;
     }),
 
     /* ----------------------------------------------------------------------------------- */
     check("person2-doc-back").custom((value, { req }) => {
       if (req.body["person2-doc-type"] == "aadhar") {
-        return fileUplaodCustomLogic(req, "person2-doc-back", "Please upload ID document");
+        const mode = req.body?.mode || undefined;
+        if (mode && mode == "edit" && req.session?.userInfo["person2-doc-back"] == "") {
+          return fileUplaodCustomLogic(req, "person2-doc-back", "Please upload ID document");
+        } else if (mode == undefined) {
+          return fileUplaodCustomLogic(req, "person2-doc-back", "Please upload ID document");
+        }
+        return true;
       }
       return true;
     })

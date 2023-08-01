@@ -104,6 +104,7 @@ class Person {
         const gp = await PgPerson.findById(this.personId);
         if (gp) {
           this.personDetails = {
+            "id": gp._id,
             "person-fullname": gp.fullName,
             "person-email": gp.email,
             "person-gender": gp.gender,
@@ -156,7 +157,8 @@ class Person {
           j.zipcode = pd["person-zipcode"]
 
           let isupdated = await j.save();
-          console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
+          return isupdated;
+          // console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
         }
 
       } catch (err) {
@@ -194,7 +196,8 @@ class Person {
           j.guardian_zipcode = pd["person2-zipcode"]
 
           let isupdated = await j.save();
-          console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
+          return isupdated;
+          // console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
         }
 
       } catch (err) {

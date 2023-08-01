@@ -37,8 +37,8 @@ const getAllPgPerson = async (req, res, next) => {
 
 const getNewPgPersonFrm = async (req, res, next) => {
     let userdata = null;
-    
-    if(req.query?.is == "new"){
+
+    if (req.query?.is == "new") {
         delete req.session.userInfo;
         delete req.session.uploadFiles;
         delete req.session.currentPerson;
@@ -51,7 +51,6 @@ const getNewPgPersonFrm = async (req, res, next) => {
     if (req.session.currentPerson) {
         const p = new Person(req.session.currentPerson);
         userdata = await p.getPersonalDetails();
-        console.log("page load user id: ",req.session.currentPerson);
     }
 
     req.session.step1 = { isCompleted: req.session?.step1?.isCompleted || false };
@@ -77,7 +76,6 @@ const getNewPgPersonGuardianFrm = async (req, res, next) => {
     if (req.session.currentPerson) {
         const p = new Person(req.session.currentPerson);
         userdata = await p.getGuardianDetails();
-        console.log("page load user id: ",req.session.currentPerson);
     }
 
     if (
@@ -161,10 +159,10 @@ const postNewPgPersonFrm = async (req, res, next) => {
 
         const p = new Person(person_id);
         let r = await p.addPersonalDetails(req.session.userInfo);
-         if(r){
+        if (r) {
             req.session.currentPerson = r;
-         }
-         req.session.step1.isCompleted = true;
+        }
+        req.session.step1.isCompleted = true;
         res.redirect("/dashboard/person/create-new/guardian-info");
     }
 }
@@ -231,23 +229,22 @@ const postNewPgPersonGuardianFrm = async (req, res, next) => {
 }
 
 const getPaymentFrm = async (req, res, next) => {
-    console.log("user id:", req.session.currentPerson);
     /**
      * If user direct request this page then check if user completed previous steps
      * if not completed then redirect user to the first step 
      */
-    if(req.session.currentPerson == undefined){
+    if (req.session.currentPerson == undefined) {
         res.redirect("/dashboard/person/create-new/personal-info");
     }
-    
+
     try {
         // let payData = [];
         const person = new Person(req.session.currentPerson || null);
         let payData = await person.getPaymentInfo();
-       
+
         renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
-            oldValue : payData[0] || false
+            oldValue: payData[0] || false
         });
     } catch (err) {
         if (!err.stateCode) {
@@ -293,7 +290,7 @@ const postPaymentFrm = async (req, res, next) => {
 
     let cperson = new Person(req.session.currentPerson);
     let p = await cperson.makePayment(req.body);
-    if(p){
+    if (p) {
         paydata = false;
         paymentadded = true
     }
@@ -306,28 +303,162 @@ const postPaymentFrm = async (req, res, next) => {
 
 }
 
-const getEditPerson = (req,res,next) =>{
-    const uid = req.params.uid;
+const getEditPerson = async (req, res, next) => {
+    if (req.session.uid == undefined) {
+        return res.redirect("/dashboard/person");
+    }
+
+    const uid = req.session.uid;
+    // const person = new Person(uid);
+    // const data = await person.getPersonalDetails();
     return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
         pageTitle: "Edit Person",
         country: getAllCountry,
-        states: false,
-        oldValue : false,
-        pid:uid
+        states: getAllStates[req.session.userInfo["person-country"]] || false,
+        oldValue: req.session.userInfo || false,
+        pid: uid
     });
-    
 }
 
-const postEditPerson = (req,res,next) =>{
-    console.log(req.body);
+const postEditPerson = async (req, res, next) => {
+    const uid = req.body.pid;
+    const cTab = "personal";
+
+    const parseError = {};
+    const person = new Person(uid);
+    let data = await person.getPersonalDetails();
+
+    if (!req.session.userInfo) {
+        req.session.userInfo = { ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles };
+    } else {
+        req.session.userInfo = { ...req.session.userInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
+    }
+
+    /**
+     * Fetch error from requrest object
+     */
+    const errors = validationResult(req);
+    /**
+     * If it has error then send error object and old data to the view
+     */
+
+    if (!errors.isEmpty()) {
+        const allError = errors.array();
+        allError.forEach(err => {
+            parseError[err.path] = err.msg
+        });
+
+        return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+            pageTitle: "Edit Person",
+            country: getAllCountry,
+            states: getAllStates[req.body["person-country"]] || false,
+            pid: uid,
+            currentTab: cTab,
+            errorObj: parseError,
+            oldValue: req.session.userInfo || false,
+            isVerificationPending: true
+        });
+
+    }
+
+    const updPersonal = await person.editPersonalDetails(req.session.userInfo);
+    let message = "";
+    if (updPersonal) {
+        message = "personal detail updated successfully!";
+        // req.session.userInfo = null;
+        req.session.uploadFiles = null;
+        let p = await person.getPersonalDetails();
+        let g = await person.getGuardianDetails();
+        data = Object.assign({}, p, g);
+    }
+
     return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
         pageTitle: "Edit Person",
         country: getAllCountry,
-        states: false,
-        oldValue : false,
-        pid:uid
+        states: getAllStates[data["person-country"]] || false,
+        oldValue: data || false,
+        pid: uid,
+        currentTab: cTab,
+        successMsg: message
     });
-   
+
+}
+
+const getEditGuardian = async (req, res, next) => {
+    if (req.session.uid == undefined) {
+        return res.redirect("/dashboard/person");
+    }
+
+    const uid = req.session.uid;
+    return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+        pageTitle: "Edit Person",
+        country: getAllCountry,
+        states: getAllStates[req.session.userInfo["person2-country"]] || false,
+        oldValue: req.session.userInfo || false,
+        pid: uid,
+        currentTab: "guardian"
+    });
+}
+const postEditGurdian = async (req, res, next) => {
+    const uid = req.body.pid;
+    const parseError = {};
+    const person = new Person(uid);
+    let data = await person.getGuardianDetails();
+    const cTab = "guardian";
+
+    if (!req.session.userInfo) {
+        req.session.userInfo = { ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles };
+    } else {
+        req.session.userInfo = { ...req.session.userInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
+    }
+
+    /**
+     * Fetch error from requrest object
+     */
+    const errors = validationResult(req);
+    /**
+     * If it has error then send error object and old data to the view
+     */
+
+    if (!errors.isEmpty()) {
+        const allError = errors.array();
+        allError.forEach(err => {
+            parseError[err.path] = err.msg
+        });
+
+        return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+            pageTitle: "Edit Person",
+            country: getAllCountry,
+            states: getAllStates[req.session.userInfo["person2-country"]] || false,
+            pid: uid,
+            currentTab: cTab,
+            errorObj: parseError,
+            oldValue: req.session.userInfo || false,
+            isVerificationPending: true
+        });
+
+    }
+
+    const updPersonal = await person.addEditGuardianDetails(req.session.userInfo);
+    let message = "";
+    if (updPersonal) {
+        message = "guardian details updated successfully!";
+        // req.session.userInfo = null;
+        req.session.uploadFiles = null;
+        let p = await person.getPersonalDetails();
+        let g = await person.getGuardianDetails();
+        data = Object.assign({}, p, g);
+    }
+
+    return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+        pageTitle: "Edit Person",
+        country: getAllCountry,
+        states: getAllStates[data["person2-country"]] || false,
+        oldValue: data || false,
+        pid: uid,
+        currentTab: "guardian",
+        successMsg: message
+    });
 }
 
 
@@ -346,7 +477,7 @@ const getStates = (req, res, next) => {
 
 const postVerifyCode = async (req, res, next) => {
     const code = parseInt(req.body.vcode);
-    console.log(code);
+
     if (code > 0) {
         let formatedNumber;
         if (req.session.userInfo == undefined) {
@@ -363,7 +494,6 @@ const postVerifyCode = async (req, res, next) => {
             formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
         }
         const response = await verifyCode(formatedNumber, code);
-        console.log("verify Res: ", response);
 
         if (response == "approved") {
             if (req.session.userInfo['person-mobile-verified']) {
@@ -402,6 +532,8 @@ module.exports = {
     postPaymentFrm,
     getEditPerson,
     postEditPerson,
+    getEditGuardian,
+    postEditGurdian,
     getStates,
     postVerifyCode
 }
