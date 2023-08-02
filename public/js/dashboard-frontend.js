@@ -182,18 +182,18 @@ const createPersonScript = () => {
                 showVerifed();
 
                 vcode.value = '';
-                // closePopup();
+                closePopup();
 
-                if (currentPath.length && currentPath.includes("personal-info")) {
-                    currentPath.pop("personal-info");
-                    currentPath.push("guardian-info");
-                    window.location.href = currentPath.join("/")
-                } else {
-                    currentPath.length && currentPath.includes("guardian-info");
-                    currentPath.pop("guardian-info");
-                    currentPath.push("payment-info");
-                    window.location.href = currentPath.join("/");
-                }
+                // if (currentPath.length && currentPath.includes("personal-info")) {
+                //     currentPath.pop("personal-info");
+                //     currentPath.push("guardian-info");
+                //     window.location.href = currentPath.join("/")
+                // } else {
+                //     currentPath.length && currentPath.includes("guardian-info");
+                //     currentPath.pop("guardian-info");
+                //     currentPath.push("payment-info");
+                //     window.location.href = currentPath.join("/");
+                // }
             } else {
                 showLoader(true);
                 disableSubmit(false);

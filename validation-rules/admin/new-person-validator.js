@@ -62,7 +62,19 @@ const personalInfoValidator = () => {
     /* ----------------------------------------------------------------------------------- */
     body("person-mobile", "Please enter valid mobile no")
       .isLength({ min: 1 })
-      .isMobilePhone(),
+      .isMobilePhone().custom(async (value, { req }) => {
+
+        const mode = req.session?.mode || undefined;
+        const uid = req.session?.uid || undefined;
+
+        if (mode && mode == "edit" && uid) {
+          const user = await PgPerson.findById(uid);
+          if(user && user.mobile_no != value && !req.session.isMobileVerified){
+            throw new Error("mobile no. not found in our records, please verify it");
+          }
+          return true;
+        } 
+      }),
     /* ----------------------------------------------------------------------------------- */
     body("person-dob").custom((value, { req }) => {
       if (value == '') {
@@ -112,7 +124,7 @@ const personalInfoValidator = () => {
     /* ----------------------------------------------------------------------------------- */
     check("person-image").custom((value, { req }) => {
       const mode = req.body?.mode || undefined;
-      if (mode && mode == "edit" && req.session?.userInfo["person-image"] == "") {
+      if (mode && mode == "edit" && req.session.userInfo["person-image"] == "") {
         return fileUplaodCustomLogic(req, "person-image", "Profile image reqired");
       } else if (mode == undefined) {
         return fileUplaodCustomLogic(req, "person-image", "Profile image reqired");

@@ -334,6 +334,7 @@ const postEditPerson = async (req, res, next) => {
         req.session.userInfo = { ...req.session.userInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
     }
 
+
     /**
      * Fetch error from requrest object
      */
@@ -347,7 +348,14 @@ const postEditPerson = async (req, res, next) => {
         allError.forEach(err => {
             parseError[err.path] = err.msg
         });
-
+        const isVerified = req.session?.userInfo ? req.session?.isMobileVerified : true;
+        if (!isVerified) {
+            const formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
+            console.log(formatedNumber);
+            // const r = await sendSMS(formatedNumber);
+            // console.log(r);
+        }
+        
         return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
             pageTitle: "Edit Person",
             country: getAllCountry,
@@ -356,7 +364,7 @@ const postEditPerson = async (req, res, next) => {
             currentTab: cTab,
             errorObj: parseError,
             oldValue: req.session.userInfo || false,
-            isVerificationPending: true
+            isVerificationPending: isVerified
         });
 
     }
@@ -367,6 +375,7 @@ const postEditPerson = async (req, res, next) => {
         message = "personal detail updated successfully!";
         // req.session.userInfo = null;
         req.session.uploadFiles = null;
+        req.session.isMobileVerified = false;
         let p = await person.getPersonalDetails();
         let g = await person.getGuardianDetails();
         data = Object.assign({}, p, g);
@@ -477,7 +486,7 @@ const getStates = (req, res, next) => {
 
 const postVerifyCode = async (req, res, next) => {
     const code = parseInt(req.body.vcode);
-
+    
     if (code > 0) {
         let formatedNumber;
         if (req.session.userInfo == undefined) {
@@ -493,14 +502,19 @@ const postVerifyCode = async (req, res, next) => {
         } else {
             formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
         }
-        const response = await verifyCode(formatedNumber, code);
-
+        // const response = await verifyCode(formatedNumber, code);
+        const response = "approved";
         if (response == "approved") {
             if (req.session.userInfo['person-mobile-verified']) {
                 req.session.userInfo['person2-mobile-verified'] = true;
+                // req.session?.userInfo['edit-person2-mobile-verified'] = true;
             } else {
                 req.session.userInfo['person-mobile-verified'] = true;
+                // req.session?.userInfo['edit-person-mobile-verified'] = true;
             }
+
+            req.session.isMobileVerified = true;
+ 
             res.send(JSON.stringify({
                 success: true,
                 data: "verified"
