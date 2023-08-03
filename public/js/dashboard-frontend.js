@@ -20,7 +20,7 @@ const checkForDocument = (docType, otherBtn) => {
     if (docType.length) {
         docType.forEach(rd => {
             rd.addEventListener("click", (e) => {
-                if (e.target.value.trim() == "aadhar") {
+                if (e.target.value.trim() == "aadhar" || e.target.value.trim() == "vi") {
                     otherBtn.parentNode.classList.remove("hidden");
                 } else {
                     otherBtn.parentNode.classList.add("hidden");
@@ -134,14 +134,19 @@ const createPersonScript = () => {
     })
     submitBtn && submitBtn.addEventListener("click", async (e) => {
         const vcode = popupBox.querySelector(`input[name="mobile-verification"]`);
+        const mode = popupBox.querySelector(`input[name="mode"]`);
         const removeErrorNode = () => {
             const errorSpan = popupBox.querySelector("[data-verifrm-error]");
             errorSpan && errorSpan.remove();
             vcode.style.border = "1px solid #e5e7eb";
         }
 
-        const disableSubmit = (isDisabled = true) => {
-            submitBtn.setAttribute("disabled", isDisabled);
+        const disableSubmit = (isDisabled = false) => {
+            if (isDisabled) {
+                submitBtn.setAttribute("disabled", isDisabled);
+            } else {
+                submitBtn.removeAttribute("disabled");
+            }
             submitBtn.style.cursor = isDisabled ? "not-allowed" : "pointer";
         }
 
@@ -159,7 +164,7 @@ const createPersonScript = () => {
             removeErrorNode();
             //show loading
             showLoader();
-            disableSubmit();
+            disableSubmit(true);
 
             const url = window.location.origin + "/dashboard/verifycode";
             const option = {
@@ -169,7 +174,8 @@ const createPersonScript = () => {
                     "accept": "application/json"
                 },
                 body: JSON.stringify({
-                    vcode: vcode?.value || 0
+                    vcode: vcode?.value || 0,
+                    mode: mode ? mode.value : "create"
                 })
             }
             const res = await sendRequest(url, option);
@@ -183,6 +189,23 @@ const createPersonScript = () => {
 
                 vcode.value = '';
                 closePopup();
+
+
+                if (mode && mode.value == "edit") {
+                    const field = document.querySelector("#person-mobile");
+                    const field2 = document.querySelector("#person2-mobile");
+
+                    if (field.classList.contains("border-red-700")) {
+                        field.classList.remove("border-red-700");
+                        field.nextElementSibling.innerHTML = "";
+                    }
+
+                    if (field2.classList.contains("border-red-700")) {
+                        field2.classList.remove("border-red-700");
+                        field2.nextElementSibling.innerHTML = "";
+                    }
+                }
+
 
                 // if (currentPath.length && currentPath.includes("personal-info")) {
                 //     currentPath.pop("personal-info");
@@ -205,31 +228,31 @@ const createPersonScript = () => {
     })
 }
 
-const customTab = () =>{
+const customTab = () => {
     const tabContainer = document.querySelector(`[data-tabs-container]`);
     const tabs = document.querySelector(`[data-tabs-container] [data-tabs]`);
-    if(tabs){
-        tabs.querySelectorAll("li").forEach(el=>{
-            el.addEventListener("click",(e)=>{
+    if (tabs) {
+        tabs.querySelectorAll("li").forEach(el => {
+            el.addEventListener("click", (e) => {
                 const id = e.target.dataset.tabid;
                 const tabDiv = document.querySelector(id);
 
                 const allTabConent = tabContainer.querySelectorAll(`[data-tabcontent]`);
-                
-                if(allTabConent.length) {
+
+                if (allTabConent.length) {
                     allTabConent.forEach(el => {
                         el.classList.add("hidden");
                     });
 
                     tabs.querySelectorAll("li").forEach(el => {
-                        el.classList.add("bg-gray-100","border-b-0");
-                        el.classList.remove("bg-white","border-b-[3px]","border-b-purple-700");
+                        el.classList.add("bg-gray-100", "border-b-0");
+                        el.classList.remove("bg-white", "border-b-[3px]", "border-b-purple-700");
                     })
                     tabDiv.classList.remove("hidden");
-                    e.target.classList.add("bg-white","border-b-[3px]","border-b-purple-700");
-                    e.target.classList.remove("bg-gray-100","border-b-0");
+                    e.target.classList.add("bg-white", "border-b-[3px]", "border-b-purple-700");
+                    e.target.classList.remove("bg-gray-100", "border-b-0");
                 }
-                
+
             })
         })
     }
@@ -252,15 +275,15 @@ function main() {
 
     if (Object.keys(callDict).includes(pathName)) {
         typeof callDict[pathName] == "function" && callDict[pathName].call();
-    }else{
-        if(Object.keys(callDict).length){
+    } else {
+        if (Object.keys(callDict).length) {
             const checkUrlPattern = (url) => {
-                let pattern = `(${url.replaceAll("/","\/")})+`; 
+                let pattern = `(${url.replaceAll("/", "\/")})+`;
                 let tergetPattern = new RegExp(pattern);
                 return tergetPattern.test(window.location.pathname);
-             }
+            }
             let targetUrl = Object.keys(callDict).find(checkUrlPattern);
-            if(targetUrl){
+            if (targetUrl) {
                 typeof callDict[targetUrl] == "function" && callDict[targetUrl].call();
             }
         }

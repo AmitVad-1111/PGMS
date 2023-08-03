@@ -351,9 +351,14 @@ const postEditPerson = async (req, res, next) => {
         const isVerified = req.session?.userInfo ? req.session?.isMobileVerified : true;
         if (!isVerified) {
             const formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
-            console.log(formatedNumber);
-            // const r = await sendSMS(formatedNumber);
-            // console.log(r);
+            if(process.env.TWILLIO_ENABLED == "true"){
+                const r = await sendSMS(formatedNumber);
+                console.log(r);
+                console.log("TWILLIO_ENABLED: Yes");
+            }else{
+                console.log("TWILLIO_ENABLED: NO");
+            }
+
         }
         
         return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
@@ -381,16 +386,16 @@ const postEditPerson = async (req, res, next) => {
         data = Object.assign({}, p, g);
     }
 
-    return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
-        pageTitle: "Edit Person",
-        country: getAllCountry,
-        states: getAllStates[data["person-country"]] || false,
-        oldValue: data || false,
-        pid: uid,
-        currentTab: cTab,
-        successMsg: message
-    });
-
+    // renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+    //     pageTitle: "Edit Person",
+    //     country: getAllCountry,
+    //     states: getAllStates[data["person-country"]] || false,
+    //     oldValue: data || false,
+    //     pid: uid,
+    //     currentTab: cTab,
+    //     successMsg: message
+    // });
+    return res.redirect("/dashboard/person");
 }
 
 const getEditGuardian = async (req, res, next) => {
@@ -435,6 +440,18 @@ const postEditGurdian = async (req, res, next) => {
             parseError[err.path] = err.msg
         });
 
+        const isVerified = req.session?.userInfo ? req.session?.isMobileVerified2 : true;
+        if (!isVerified) {
+            const formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
+            if(process.env.TWILLIO_ENABLED == "true"){
+                const r = await sendSMS(formatedNumber);
+                console.log(r);
+                console.log("TWILLIO_ENABLED: Yes");
+            }else{
+                console.log("TWILLIO_ENABLED: NO");
+            }
+        }
+
         return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
             pageTitle: "Edit Person",
             country: getAllCountry,
@@ -443,7 +460,7 @@ const postEditGurdian = async (req, res, next) => {
             currentTab: cTab,
             errorObj: parseError,
             oldValue: req.session.userInfo || false,
-            isVerificationPending: true
+            isVerificationPending: isVerified
         });
 
     }
@@ -453,21 +470,24 @@ const postEditGurdian = async (req, res, next) => {
     if (updPersonal) {
         message = "guardian details updated successfully!";
         // req.session.userInfo = null;
+        req.session.isMobileVerified2 = false;
         req.session.uploadFiles = null;
         let p = await person.getPersonalDetails();
         let g = await person.getGuardianDetails();
         data = Object.assign({}, p, g);
     }
 
-    return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
-        pageTitle: "Edit Person",
-        country: getAllCountry,
-        states: getAllStates[data["person2-country"]] || false,
-        oldValue: data || false,
-        pid: uid,
-        currentTab: "guardian",
-        successMsg: message
-    });
+    // renderView(req, res, "pages/dashboard/pg-person/editPerson", {
+    //     pageTitle: "Edit Person",
+    //     country: getAllCountry,
+    //     states: getAllStates[data["person2-country"]] || false,
+    //     oldValue: data || false,
+    //     pid: uid,
+    //     currentTab: cTab,
+    //     successMsg: message
+    // });
+    return res.redirect("/dashboard/person");
+
 }
 
 
@@ -486,6 +506,7 @@ const getStates = (req, res, next) => {
 
 const postVerifyCode = async (req, res, next) => {
     const code = parseInt(req.body.vcode);
+    const mode = req.body.mode;
     
     if (code > 0) {
         let formatedNumber;
@@ -497,23 +518,46 @@ const postVerifyCode = async (req, res, next) => {
             }));
         }
 
-        if (req.session.userInfo['person-mobile-verified']) {
-            formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
-        } else {
-            formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
+        if(mode == "edit"){
+            const verificatinType = req.session.verify_for;
+            if(verificatinType == "personal"){
+                formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
+            }
+
+            if(verificatinType == "guardian"){
+                formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
+            }
+        }else{
+            if (req.session.userInfo['person-mobile-verified']) {
+                formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
+            } else {
+                formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
+            }
         }
-        // const response = await verifyCode(formatedNumber, code);
-        const response = "approved";
+
+        console.log("Verification Mode:", mode)
+        console.log("Verificaton Code: ",code);
+        console.log("Verificaton For: ", formatedNumber);
+
+        let response;
+        if(process.env.TWILLIO_ENABLED == "true"){
+            response = await verifyCode(formatedNumber, code);
+        }else{
+            response = code == 121212 ? "approved": false;
+        }
+
         if (response == "approved") {
             if (req.session.userInfo['person-mobile-verified']) {
                 req.session.userInfo['person2-mobile-verified'] = true;
-                // req.session?.userInfo['edit-person2-mobile-verified'] = true;
             } else {
                 req.session.userInfo['person-mobile-verified'] = true;
-                // req.session?.userInfo['edit-person-mobile-verified'] = true;
             }
 
+            //for edit person
             req.session.isMobileVerified = true;
+            req.session.isMobileVerified2 = true;
+
+            delete req.session.verify_for;
  
             res.send(JSON.stringify({
                 success: true,

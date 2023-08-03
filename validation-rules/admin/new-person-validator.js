@@ -70,6 +70,7 @@ const personalInfoValidator = () => {
         if (mode && mode == "edit" && uid) {
           const user = await PgPerson.findById(uid);
           if(user && user.mobile_no != value && !req.session.isMobileVerified){
+            req.session.verify_for = "personal";
             throw new Error("mobile no. not found in our records, please verify it");
           }
           return true;
@@ -186,7 +187,20 @@ const parentGuardianValidator = () => {
     /* ----------------------------------------------------------------------------------- */
     body("person2-mobile", "Please enter valid mobile no")
       .isLength({ min: 1 })
-      .isMobilePhone(),
+      .isMobilePhone().custom(async (value, { req }) => {
+
+        const mode = req.session?.mode || undefined;
+        const uid = req.session?.uid || undefined;
+
+        if (mode && mode == "edit" && uid) {
+          const user = await PgPerson.findById(uid);
+          if(user && user.guardian_mobile_no != value && !req.session.isMobileVerified){
+            req.session.verify_for = "guardian";
+            throw new Error("mobile no. not found in our records, please verify it");
+          }
+          return true;
+        } 
+      }),
     /* ----------------------------------------------------------------------------------- */
     body("person2-doc-type").custom((value) => {
       if (value == undefined) {

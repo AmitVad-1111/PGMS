@@ -247,7 +247,7 @@
               <input type="hidden" name="mode" value="edit">
             <% }%>
 
-            <div class="w-full flex justify-between">
+            <div class="w-full <% if(isedit) {%>text-end<% }else{ %>flex justify-between<%}%>">
               <% if(!isedit) {%>
                 <a prev-step-btn href="/dashboard/person/create-new/personal-info" class="
                   bg-purple-700
@@ -266,7 +266,7 @@
                 mt-10
                 text-white
               ">
-              <% if(isedit) {%>Save<% }else{ %>Next<%}%>
+              <% if(isedit) {%>Save Changes<% }else{ %>Next<%}%>
               </button>
             </div>
           </div>

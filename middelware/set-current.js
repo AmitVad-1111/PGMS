@@ -8,6 +8,7 @@ module.exports  = async (req, res, next) => {
   req.session.uid = uid;
   req.session.mode = "edit";
   req.session.isMobileVerified = false;
+  req.session.isMobileVerified2 = false;
   const person = new Person(uid);
   const personal = await person.getPersonalDetails();
   const gaurdian = await person.getGuardianDetails();
