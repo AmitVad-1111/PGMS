@@ -31,8 +31,15 @@ const getAllPgPerson = async (req, res, next) => {
     const gpPgUser = await p.getAllPgPerson();
     renderView(req, res, "pages/dashboard/pg-person/person", {
         pageTitle: "PG Persons",
-        persons: gpPgUser || false
+        persons: gpPgUser.length ? gpPgUser : false
     });
+}
+
+const postPerson = async (req,res,next) => {
+    const pid = req.body.person_id;
+    const p = new Person(pid);
+    await p.removePerson();
+    res.redirect("/dashboard/person");
 }
 
 const getNewPgPersonFrm = async (req, res, next) => {
@@ -592,6 +599,7 @@ module.exports = {
     postEditPerson,
     getEditGuardian,
     postEditGurdian,
+    postPerson,
     getStates,
     postVerifyCode
 }

@@ -17,7 +17,8 @@ const {
    getEditPerson,
    postEditPerson,
    getEditGuardian,
-   postEditGurdian
+   postEditGurdian,
+   postPerson
 } = require("../controllers/admin/DashBoard");
 
 const uploadFields = [
@@ -30,7 +31,10 @@ const uploadFields = [
 
 
 router.get("/", getDashBoard);
+
 router.get("/person", getAllPgPerson);
+router.post("/person",fileUploads.none(),postPerson);
+
 router.get("/person/create-new/personal-info", getNewPgPersonFrm);
 router.post("/person/create-new/personal-info", fileUploads.fields(uploadFields), personalInfoValidator(), postNewPgPersonFrm);
 

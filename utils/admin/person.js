@@ -1,6 +1,8 @@
 const PgPerson = require("../../models/admin/PgPerson");
 const PgPayment = require("../../models/admin/PgPayment");
 const Payments = require("../../utils/admin/payments");
+const fs = require("fs");
+const path = require("path");
 
 function formatDate(date) {
   let m = date.getMonth() + 1;
@@ -261,10 +263,11 @@ class Person {
   }
 
   /*************************************************
-   * Get list of person
+   * Get list of persons
    *************************************************/
   async getAllPgPerson() {
     try {
+      
       let alldata = [];
       const gapp = await PgPerson.find().select("_id fullName profile_image city mobile_no guardian_mobile_no created_at").populate("person_payments", "payment_status created_at").populate("person_deposit", "payment_status");
       if (gapp?.length) {
@@ -310,6 +313,91 @@ class Person {
       }
     } catch (err) {
       throw new Error(err);
+    }
+  }
+
+  async removePerson() {
+    if (this.personId) {
+      try{
+        const thatPerson = await PgPerson.findOne({ _id: this.personId });
+        if(thatPerson){
+          // console.log(thatPerson);
+
+          /**
+           * Remove person's profile image and docs
+           */
+          const dirpath = path.join(__dirname,"../../public/uploads");
+          if(thatPerson.profile_image){
+            const profileImg = `${dirpath + thatPerson.profile_image}`
+            console.log(profileImg);
+            if(fs.existsSync(profileImg)){
+              const removeProfile = fs.unlink(profileImg,(err)=>{
+                if(err){
+                  throw new Error(err);
+                }
+              });
+            }
+          }
+
+          if(thatPerson.doc_front){
+            const docFront = `${dirpath + thatPerson.doc_front}`;
+            console.log(docFront);
+            if(fs.existsSync(docFront)){
+              const removeDocFront = fs.unlink(docFront,(err)=>{
+                if(err){
+                  throw new Error(err);
+                }
+              });
+            }
+          }
+
+          if(thatPerson.doc_back){
+            const docBack = `${dirpath + thatPerson.doc_back}`;
+            console.log(docBack);
+            if(fs.existsSync(docBack)){
+              const removeDocBack = fs.unlink(docBack,(err)=>{
+                if(err){
+                  throw new Error(err);
+                }
+              });
+            }
+          }
+          
+
+
+          /**
+           * Remove person's guardian docs
+           */
+
+          if(thatPerson.guardian_doc_front){
+            const gdockFront = `${dirpath + thatPerson.guardian_doc_front}`;
+            console.log(gdockFront);
+            if(fs.existsSync(gdockFront)){
+              const removeDocFront = fs.unlink(gdockFront,(err)=>{
+                if(err){
+                  throw new Error(err);
+                }
+              });
+            }
+          }
+
+          if(thatPerson.guardian_doc_back){
+            const gdockBack = `${dirpath + thatPerson.guardian_doc_back}`;
+            console.log(gdockBack)
+            if(fs.existsSync(gdockBack)){
+              const removeDocBack = fs.unlink(gdockBack,(err)=>{
+                if(err){
+                  throw new Error(err);
+                }
+              });
+            }
+          }
+          
+          await PgPerson.deleteOne({_id:this.personId})
+        }
+      }catch(err){
+        throw new Error(err);
+      }
     }
   }
 }

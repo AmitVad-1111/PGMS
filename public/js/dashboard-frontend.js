@@ -60,6 +60,29 @@ const fillState = (countryEL, stateEL) => {
     }
 }
 
+function callRemoveCta(){
+    const removeBtn = document.querySelectorAll("[data-remove]");
+    removeBtn.length && removeBtn.forEach(rbtn => {
+        rbtn.addEventListener("click",(e)=>{
+            console.log(e.target.parentNode);
+            Swal.fire({
+                title: 'Do you want to delete this person?',
+                icon:"question",
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+              }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    const submitEvent = new CustomEvent("submit",{cancelable:true});
+                    e.target.parentNode.requestSubmit();
+                } 
+            });
+        })
+    })
+
+
+}
+
 
 const createPersonScript = () => {
     const countryEL = document.querySelector("#person-country");
@@ -270,7 +293,11 @@ function main() {
         "/dashboard/person/edit": () => {
             createPersonScript();
             customTab();
-        }
+        },
+        "/dashboard/person": () => {
+            callRemoveCta();
+            
+        },
     }
 
     if (Object.keys(callDict).includes(pathName)) {

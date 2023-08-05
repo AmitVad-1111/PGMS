@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const PgPayment = require("../admin/PgPayment");
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const PgPersonSchema = new mongoose.Schema({
@@ -107,6 +108,25 @@ const PgPersonSchema = new mongoose.Schema({
   timestamps: {
     createdAt: 'created_at',
     updatedAt: 'updated_at'
+  }
+});
+
+/******************************************************************************************
+ * Middelware 
+ * Delete payment detele from payment collection if any person remove from this collsection
+ ******************************************************************************************/
+PgPersonSchema.pre("deleteOne", async function(next){
+  try{
+    const updatedDoc = await this.model.findOne(this.getQuery());
+    if(updatedDoc){
+      const removePay = await PgPayment.deleteMany({person_id: updatedDoc._id});
+    }
+    next();
+  }catch(err){
+    if(!err.statusCode){
+      err.statusCode = 500;
+    }
+    throw new Error(err);
   }
 });
 
