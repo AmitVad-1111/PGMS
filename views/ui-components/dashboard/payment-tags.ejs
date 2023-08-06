@@ -1,0 +1,36 @@
+<%if(payTags){%>
+<div class="flex items-center mb-10" data-payment-tags>
+   <!-- Payment Tags -->
+   <% payTags.forEach(tag => {%>
+  <div class="flex mr-8" data-paytag>
+    <div class="px-3 py-2  bg-white" data-payleft>
+      <div class="text-lg font-semibold">
+        <%if(tag.is_rent){%>
+          Rent
+        <%}else if(tag.is_deposit){%>
+          Deposit
+        <%}%>
+        </div>
+      <div class="text-sm"><%=tag.month%>-<%=tag.year%></div>
+    </div>
+    <div class="px-3 py-2 border-l-2 <%if(tag.status == 'paid'){%>border-l-green-400 bg-green-200<%}else{%>border-l-orange-400 bg-orange-200<%}%>" data-payright>
+      <div class="text-sm font-bold">
+        <%if(tag.status == "paid"){%>
+          Paid
+        <%}else{%>
+          Pending
+        <%}%>
+      </div>
+      <div class="flex items-center" data-amount>
+        <span>
+          <%- include("../../../public/images/currency-symbol/Indian-Rupee-symbol.svg")%>
+        </span>
+        <span class="text-2xl font-semibold"><%=tag.amount%></span>
+      </div>
+    </div>
+  </div>
+  <%})%>
+
+
+</div>
+<%}%>

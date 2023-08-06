@@ -1204,6 +1204,14 @@ video {
   margin-top: auto;
 }
 
+.mr-8 {
+  margin-right: 2rem;
+}
+
+.mb-10 {
+  margin-bottom: 2.5rem;
+}
+
 .box-border {
   box-sizing: border-box;
 }
@@ -1778,6 +1786,11 @@ video {
   border-top-right-radius: 0.5rem;
 }
 
+.rounded-l {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
 .rounded-bl-lg {
   border-bottom-left-radius: 0.5rem;
 }
@@ -1819,8 +1832,16 @@ video {
   border-bottom-width: 1px;
 }
 
+.border-b-0 {
+  border-bottom-width: 0px;
+}
+
 .border-b-2 {
   border-bottom-width: 2px;
+}
+
+.border-b-\[3px\] {
+  border-bottom-width: 3px;
 }
 
 .border-l-0 {
@@ -1835,16 +1856,12 @@ video {
   border-top-width: 1px;
 }
 
-.border-b-0 {
-  border-bottom-width: 0px;
+.border-l-2 {
+  border-left-width: 2px;
 }
 
-.border-b-\[10px\] {
-  border-bottom-width: 10px;
-}
-
-.border-b-\[3px\] {
-  border-bottom-width: 3px;
+.border-t-2 {
+  border-top-width: 2px;
 }
 
 .\!border-solid {
@@ -1908,13 +1925,58 @@ video {
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
-.border-t-transparent {
-  border-top-color: transparent;
+.border-gray-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(76 79 82 / var(--tw-border-opacity));
+}
+
+.border-gray-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(158 158 158 / var(--tw-border-opacity));
+}
+
+.border-gray-500 {
+  --tw-border-opacity: 1;
+  border-color: rgb(112 114 117 / var(--tw-border-opacity));
 }
 
 .border-b-purple-700 {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(108 43 217 / var(--tw-border-opacity));
+}
+
+.border-t-transparent {
+  border-top-color: transparent;
+}
+
+.border-l-black {
+  --tw-border-opacity: 1;
+  border-left-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
+.border-l-gray-300 {
+  --tw-border-opacity: 1;
+  border-left-color: rgb(213 214 215 / var(--tw-border-opacity));
+}
+
+.border-l-gray-500 {
+  --tw-border-opacity: 1;
+  border-left-color: rgb(112 114 117 / var(--tw-border-opacity));
+}
+
+.border-l-gray-400 {
+  --tw-border-opacity: 1;
+  border-left-color: rgb(158 158 158 / var(--tw-border-opacity));
+}
+
+.border-l-green-400 {
+  --tw-border-opacity: 1;
+  border-left-color: rgb(49 196 141 / var(--tw-border-opacity));
+}
+
+.border-l-orange-400 {
+  --tw-border-opacity: 1;
+  border-left-color: rgb(255 138 76 / var(--tw-border-opacity));
 }
 
 .bg-black {
@@ -1977,6 +2039,11 @@ video {
   background-color: rgb(254 236 220 / var(--tw-bg-opacity));
 }
 
+.bg-purple-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(172 148 250 / var(--tw-bg-opacity));
+}
+
 .bg-purple-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(126 58 242 / var(--tw-bg-opacity));
@@ -2016,9 +2083,9 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-purple-400 {
+.bg-orange-200 {
   --tw-bg-opacity: 1;
-  background-color: rgb(172 148 250 / var(--tw-bg-opacity));
+  background-color: rgb(252 217 189 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-50 {
@@ -2461,6 +2528,11 @@ video {
   color: rgb(63 131 248 / var(--tw-text-opacity));
 }
 
+.text-gray-100 {
+  --tw-text-opacity: 1;
+  color: rgb(244 245 247 / var(--tw-text-opacity));
+}
+
 .text-gray-200 {
   --tw-text-opacity: 1;
   color: rgb(229 231 235 / var(--tw-text-opacity));
@@ -2564,11 +2636,6 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.text-gray-100 {
-  --tw-text-opacity: 1;
-  color: rgb(244 245 247 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -2817,11 +2884,6 @@ video {
   background-color: rgb(108 43 217 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-gray-300:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(213 214 215 / var(--tw-bg-opacity));
-}
-
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
@@ -2830,11 +2892,6 @@ video {
 .hover\:text-gray-800:hover {
   --tw-text-opacity: 1;
   color: rgb(26 28 35 / var(--tw-text-opacity));
-}
-
-.hover\:text-black:hover {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 
 .focus\:border-purple-300:focus {

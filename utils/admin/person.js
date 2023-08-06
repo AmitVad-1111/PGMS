@@ -160,7 +160,6 @@ class Person {
 
           let isupdated = await j.save();
           return isupdated;
-          // console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
         }
 
       } catch (err) {
@@ -178,7 +177,6 @@ class Person {
     if (this.personId) {
       try {
         const j = await PgPerson.findById(this.personId);
-        console.log("addEditGuardianDetails >>>>>>>>", j)
         if (j) {
           j.guardian_fullName = pd["person2-fullname"]
           j.guardian_email = pd["person2-email"]
@@ -199,7 +197,6 @@ class Person {
 
           let isupdated = await j.save();
           return isupdated;
-          // console.log("updated successfully:>>>>>>>>>>>>>", isupdated);
         }
 
       } catch (err) {
@@ -321,15 +318,13 @@ class Person {
       try{
         const thatPerson = await PgPerson.findOne({ _id: this.personId });
         if(thatPerson){
-          // console.log(thatPerson);
 
           /**
            * Remove person's profile image and docs
            */
-          const dirpath = path.join(__dirname,"../../public/uploads");
+          const dirpath = path.join(__dirname,"../../public/images/uploads");
           if(thatPerson.profile_image){
             const profileImg = `${dirpath + thatPerson.profile_image}`
-            console.log(profileImg);
             if(fs.existsSync(profileImg)){
               const removeProfile = fs.unlink(profileImg,(err)=>{
                 if(err){
@@ -341,7 +336,6 @@ class Person {
 
           if(thatPerson.doc_front){
             const docFront = `${dirpath + thatPerson.doc_front}`;
-            console.log(docFront);
             if(fs.existsSync(docFront)){
               const removeDocFront = fs.unlink(docFront,(err)=>{
                 if(err){
@@ -353,7 +347,6 @@ class Person {
 
           if(thatPerson.doc_back){
             const docBack = `${dirpath + thatPerson.doc_back}`;
-            console.log(docBack);
             if(fs.existsSync(docBack)){
               const removeDocBack = fs.unlink(docBack,(err)=>{
                 if(err){
@@ -362,8 +355,6 @@ class Person {
               });
             }
           }
-          
-
 
           /**
            * Remove person's guardian docs
@@ -371,7 +362,6 @@ class Person {
 
           if(thatPerson.guardian_doc_front){
             const gdockFront = `${dirpath + thatPerson.guardian_doc_front}`;
-            console.log(gdockFront);
             if(fs.existsSync(gdockFront)){
               const removeDocFront = fs.unlink(gdockFront,(err)=>{
                 if(err){
@@ -383,7 +373,6 @@ class Person {
 
           if(thatPerson.guardian_doc_back){
             const gdockBack = `${dirpath + thatPerson.guardian_doc_back}`;
-            console.log(gdockBack)
             if(fs.existsSync(gdockBack)){
               const removeDocBack = fs.unlink(gdockBack,(err)=>{
                 if(err){

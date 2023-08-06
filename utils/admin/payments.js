@@ -44,6 +44,37 @@ class Payments {
       throw err;
     }
   }
+
+  async getPaymentTags() {
+    //get all payment of this person
+    if (this.userid) {
+      const allPayments = await PgPayment.find({ person_id: this.userid });
+      if (allPayments.length) {
+        const tags = [];
+        const monthNames = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+        allPayments.forEach(pymt => {
+          const thatday = new Date(pymt.created_at);
+          tags.push({
+            amount: pymt.payment_amount,
+            currency: pymt.payment_currency,
+            status: pymt.payment_status,
+            is_rent: pymt.is_rent,
+            is_deposit: pymt.is_deposit,
+            month: monthNames[thatday.getMonth()],
+            year: thatday.getFullYear()
+          })
+        });
+        return tags;
+      }
+
+      return false;
+    }else{
+      return false;
+    }
+  }
 }
 
 module.exports = Payments;

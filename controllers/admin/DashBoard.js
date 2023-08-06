@@ -6,6 +6,7 @@ const { sendSMS, verifyCode } = require("../../utils/send-sms");
 const pg_person = require("../../models/admin/PgPerson");
 const pg_payment = require("../../models/admin/PgPayment");
 const Person = require("../../utils/admin/person");
+const Payments = require("../../utils/admin/payments");
 
 const getCoutryDailCode = (c) => {
     if (Object.keys(getAllDialCode).length) {
@@ -71,7 +72,7 @@ const getNewPgPersonFrm = async (req, res, next) => {
         oldValue: userdata || req?.session?.userInfo || false,
         isVerificationPending: true
     }
-    if (req.session?.step1?.isCompleted) {
+    if (!req.session?.step1?.isCompleted) {
         pageData["isVerificationPending"] = isVerificationPending
     }
     renderView(req, res, "pages/dashboard/pg-person/create-person", pageData);
@@ -105,7 +106,7 @@ const getNewPgPersonGuardianFrm = async (req, res, next) => {
         oldValue: req?.session?.userInfo || userdata || false,
         isVerificationPending: true
     }
-    if (req.session?.step2?.isCompleted) {
+    if (!req.session?.step2?.isCompleted) {
         pageData["isVerificationPending"] = isVerificationPending
     }
     renderView(req, res, "pages/dashboard/pg-person/person-guardian", pageData);
@@ -151,12 +152,17 @@ const postNewPgPersonFrm = async (req, res, next) => {
      * If no error then we reach here and we good to go 
      */
     if (req.session.userInfo['person-mobile-verified'] == undefined || req.session.userInfo['person-mobile-verified'] == false) {
-        // req.session.userInfo['person-mobile-verified'] = false;
-        req.session.userInfo['person-mobile-verified'] = true;
+        req.session.userInfo['person-mobile-verified'] = false;
+        // req.session.userInfo['person-mobile-verified'] = true;
 
-        const formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
-        // const r = await sendSMS(formatedNumber);
-        // console.log(r);
+        if(process.env.TWILLIO_ENABLED == "true"){
+            const formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
+            const r = await sendSMS(formatedNumber);
+            console.log(r);
+        }else{
+
+        }
+
         res.redirect("/dashboard/person/create-new/personal-info");
     } else {
         /**
@@ -212,13 +218,16 @@ const postNewPgPersonGuardianFrm = async (req, res, next) => {
      * If no error then we reach here and we good to go 
      */
     if (req.session.userInfo['person2-mobile-verified'] == undefined || req.session.userInfo['person2-mobile-verified'] == false) {
-        // req.session.userInfo['person2-mobile-verified'] = false;
+        req.session.userInfo['person2-mobile-verified'] = false;
 
-        req.session.userInfo['person2-mobile-verified'] = true;
+        // req.session.userInfo['person2-mobile-verified'] = true;
 
-        const formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
-        // const r = await sendSMS(formatedNumber);
-        // console.log(r);
+        if(process.env.TWILLIO_ENABLED == "true"){
+            const formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
+            const r = await sendSMS(formatedNumber);
+            console.log(r);
+        }
+
         return res.redirect("/dashboard/person/create-new/guardian-info");
     } else {
         /**
@@ -243,15 +252,21 @@ const getPaymentFrm = async (req, res, next) => {
     if (req.session.currentPerson == undefined) {
         res.redirect("/dashboard/person/create-new/personal-info");
     }
+    
 
     try {
         // let payData = [];
-        const person = new Person(req.session.currentPerson || null);
-        let payData = await person.getPaymentInfo();
+        // const person = new Person(req.session.currentPerson || null);
+        // let payData = await person.getPaymentInfo();
 
+        const payments = new Payments(req.session.currentPerson);
+        const allTags = await payments.getPaymentTags();
+
+        console.log(allTags);
         renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
-            oldValue: payData[0] || false
+            payTags : allTags.length ? allTags : false
+            // oldValue: payData[0] || false
         });
     } catch (err) {
         if (!err.stateCode) {
@@ -292,7 +307,7 @@ const postPaymentFrm = async (req, res, next) => {
         throw err;
     }
 
-    let payData = req.body;
+    let payData = null;
     let paymentadded = false;
 
     let cperson = new Person(req.session.currentPerson);
@@ -561,8 +576,16 @@ const postVerifyCode = async (req, res, next) => {
             }
 
             //for edit person
-            req.session.isMobileVerified = true;
-            req.session.isMobileVerified2 = true;
+            if(mode == "edit"){
+                const verificatinType = req.session.verify_for;
+                if(verificatinType == "personal"){
+                    req.session.isMobileVerified = true;
+                }
+    
+                if(verificatinType == "guardian"){
+                    req.session.isMobileVerified2 = true;
+                }
+            }
 
             delete req.session.verify_for;
  

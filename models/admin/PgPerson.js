@@ -113,7 +113,7 @@ const PgPersonSchema = new mongoose.Schema({
 
 /******************************************************************************************
  * Middelware 
- * Delete payment detele from payment collection if any person remove from this collsection
+ * Delete payment from payment collection if any the person remove from the collection
  ******************************************************************************************/
 PgPersonSchema.pre("deleteOne", async function(next){
   try{
