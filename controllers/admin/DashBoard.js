@@ -64,13 +64,14 @@ const getNewPgPersonFrm = async (req, res, next) => {
     req.session.step1 = { isCompleted: req.session?.step1?.isCompleted || false };
 
     const country = req?.session?.userInfo ? getAllStates[req?.session?.userInfo["person-country"]] : false;
-    const isVerificationPending = req?.session?.userInfo ? req.session.userInfo['person-mobile-verified'] : false
+    const isVerificationPending = req?.session?.userInfo ? req.session.userInfo['person-mobile-verified'] : true;
     const pageData = {
         pageTitle: "Add New Person",
         country: getAllCountry,
         states: country,
         oldValue: userdata || req?.session?.userInfo || false,
-        isVerificationPending: true
+        isVerificationPending: true,
+        pid: req.session.currentPerson || ''
     }
     if (!req.session?.step1?.isCompleted) {
         pageData["isVerificationPending"] = isVerificationPending
@@ -98,13 +99,13 @@ const getNewPgPersonGuardianFrm = async (req, res, next) => {
 
     const country = req?.session?.userInfo ? getAllStates[req?.session?.userInfo["person2-country"]] : null;
 
-    const isVerificationPending = req?.session?.userInfo ? req.session.userInfo['person2-mobile-verified'] : false
+    const isVerificationPending = req.session.userInfo['person2-mobile-verified'] != undefined ? req.session.userInfo['person2-mobile-verified'] : true;
     const pageData = {
         pageTitle: "Add New Person",
         country: getAllCountry,
         states: country,
         oldValue: req?.session?.userInfo || userdata || false,
-        isVerificationPending: true
+        isVerificationPending: true,
     }
     if (!req.session?.step2?.isCompleted) {
         pageData["isVerificationPending"] = isVerificationPending
@@ -261,8 +262,6 @@ const getPaymentFrm = async (req, res, next) => {
 
         const payments = new Payments(req.session.currentPerson);
         const allTags = await payments.getPaymentTags();
-
-        console.log(allTags);
         renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
             payTags : allTags.length ? allTags : false
@@ -298,6 +297,7 @@ const postPaymentFrm = async (req, res, next) => {
             pageTitle: "Add New Person",
             errorObj: parseError,
             oldValue: req.body,
+            payTags: false
         });
     }
 
@@ -317,10 +317,13 @@ const postPaymentFrm = async (req, res, next) => {
         paymentadded = true
     }
 
+    const payments = new Payments(req.session.currentPerson);
+    const allTags = await payments.getPaymentTags();
+
     return renderView(req, res, "pages/dashboard/pg-person/payment", {
         pageTitle: "Add New Person",
-        oldValue: payData || false,
-        paymentadded: paymentadded
+        paymentadded: paymentadded,
+        payTags : allTags.length ? allTags : false
     });
 
 }

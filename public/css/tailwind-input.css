@@ -9,8 +9,12 @@
     color: rgb(100 116 139);
   }
 
-  .z-5 {
+  /* .z-5 {
     z-index: -5;
+  } */
+
+  .success-color{
+    background: #23e77e;
   }
 
   .stepper-wrapper {
@@ -28,7 +32,7 @@
   .stepper-items:first-child::after{
     content: '';
     height: 3px;
-    background: #eee;
+    background: #eeeeee;
     width: 25%;
     transform: translateX(50%);
     position: absolute;
@@ -36,7 +40,6 @@
     left: 10px;
     z-index: -1;
   }
-
 
   .stepper-items:last-child::before{
     content: '';
@@ -71,6 +74,7 @@
     z-index: -1;
   }
 
+
 }
 
 
@@ -85,7 +89,7 @@
   }
 
   .step-success {
-    @apply font-bold text-sm bg-green-400 z-10;
+    @apply font-bold text-sm success-color z-10;
   }
 
 

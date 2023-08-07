@@ -280,8 +280,10 @@
         <% if(isedit) {%>
           <input type="hidden" name="pid" value="<%=pid%>">
           <input type="hidden" name="mode" value="edit">
-        <% }%>
-        
+        <% }else{ %>
+          <input type="hidden" name="pid" value="<%=pid%>">
+          <input type="hidden" name="mode" value="create">
+        <%}%>
         <div class="w-full text-end">
           <button next-step-btn class="
               bg-purple-700

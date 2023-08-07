@@ -17,7 +17,7 @@ const renderViews = (reqObj,resobj,view,payload) =>{
                 isedit:false
             },
             "pages/dashboard/pg-person/person-guardian":{
-                isedit:false
+                isedit:false,
             },
             "pages/dashboard/pg-person/payment":{
                 paymentadded: false

@@ -46,6 +46,11 @@ const personalInfoValidator = () => {
           if (mode == "edit" && req.body.pid != chk._id.toString()) {
             throw new Error("Someone already registered with this email");
           }
+
+          if(mode == "create" && req.body.pid != chk._id.toString()){
+            throw new Error("Someone already registered with this email");
+          }
+          
         } else {
           throw new Error("Someone already registered with this email");
         }

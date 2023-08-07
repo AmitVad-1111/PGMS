@@ -2,7 +2,7 @@
 <div class="flex items-center mb-10" data-payment-tags>
    <!-- Payment Tags -->
    <% payTags.forEach(tag => {%>
-  <div class="flex mr-8" data-paytag>
+  <div class="flex mr-8 border-2 <%if(tag.status == 'paid'){%>border-green-300<%}else{%>border-orange-300<%}%> " data-paytag>
     <div class="px-3 py-2  bg-white" data-payleft>
       <div class="text-lg font-semibold">
         <%if(tag.is_rent){%>
@@ -13,7 +13,7 @@
         </div>
       <div class="text-sm"><%=tag.month%>-<%=tag.year%></div>
     </div>
-    <div class="px-3 py-2 border-l-2 <%if(tag.status == 'paid'){%>border-l-green-400 bg-green-200<%}else{%>border-l-orange-400 bg-orange-200<%}%>" data-payright>
+    <div class="px-3 py-2 border-l-2 <%if(tag.status == 'paid'){%>border-l-green-300 bg-green-200<%}else{%>border-l-orange-300 bg-orange-200<%}%>" data-payright>
       <div class="text-sm font-bold">
         <%if(tag.status == "paid"){%>
           Paid
@@ -30,7 +30,5 @@
     </div>
   </div>
   <%})%>
-
-
 </div>
 <%}%>
