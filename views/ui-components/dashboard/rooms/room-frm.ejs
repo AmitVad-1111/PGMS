@@ -1,0 +1,55 @@
+<div class="mt-5" data-content-section>
+  <div data-section-personal>
+    <form method="post" name="add_new_person_1" enctype="multipart/form-data">
+      <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Add New Room</h4>
+
+        <div class="flex w-full">
+          <div class="w-1/2 mr-10">
+            <label for="room_no">Room No/Name</label>
+            <input type="text" class="form-input border w-full" name="room_no" id="room_no">
+          </div>
+          <div class="w-1/2 mr-10">
+            <label for="room_location">Location</label>
+            <input type="text" placeholder="eg. Block A, Floor 1" class="form-input border w-full" name="room_location" id="room_location">
+          </div>
+        </div>
+
+
+        <div class="flex w-full mt-5">
+          <div class="w-1/2 mr-10">
+            <label for="num_sharing">No. of Sharing</label>
+            <select class="form-input border w-full" name="num_sharing" id="num_sharing">
+                <option value="">Choose Sharing</option>
+                <%[1,2,3,4,5].forEach(a => {%>
+                  <option value="<%=a%>"><%=a%></option>
+                <%})%>
+            </select>
+          </div>
+
+          <div class="w-1/2 mr-10">
+            <label for="room_image">Room Image</label>
+            <input type="file" class="form-input border w-full"
+              name="room_image" id="room_image">
+          </div>
+        </div>
+
+
+        <div class="w-full text-end">
+          <button next-step-btn class="
+              bg-purple-700
+              px-4
+              py-3
+              mt-10
+              text-white
+            ">
+            Create Room
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+  
+ 

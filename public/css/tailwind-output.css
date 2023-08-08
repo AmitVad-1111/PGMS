@@ -696,32 +696,6 @@ video {
   z-index: -1;
 }
 
-.stepper-items.step1-completed::after + li::before{
-  content: '';
-  background: #23e77e;
-}
-
-.stepper-2{
-  width: 90%;
-  display: block;
-  background: #ffffff;
-  margin: 0 auto;
-}
-
-.stepper-item{
-  float: left;
-  width: 25%;
-}
-
-.stepper-item::after{
-  content: "";
-  height: 3px;
-  background: #eee;
-  position: absolute;
-  top: 40%;
-  left: 10px;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

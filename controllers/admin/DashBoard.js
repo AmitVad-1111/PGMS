@@ -3,10 +3,9 @@ const { getAllCountry, getAllStates, getAllDialCode } = require("../../utils/sta
 const fileUploads = require("../../utils/file-upload-helper");
 const { validationResult, body } = require("express-validator");
 const { sendSMS, verifyCode } = require("../../utils/send-sms");
-const pg_person = require("../../models/admin/PgPerson");
-const pg_payment = require("../../models/admin/PgPayment");
 const Person = require("../../utils/admin/person");
 const Payments = require("../../utils/admin/payments");
+const Rooms = require("../../utils/admin/room");
 
 const getCoutryDailCode = (c) => {
     if (Object.keys(getAllDialCode).length) {
@@ -612,6 +611,27 @@ const postVerifyCode = async (req, res, next) => {
     }
 }
 
+const getRoomFrm = (req,res,next) =>{
+    return renderView(req, res, "pages/dashboard/pg-person/rooms", {
+        pageTitle: "Add Person",
+    });
+}
+
+
+const getCreateRoomFrm = (req,res,next) => {
+    return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
+        pageTitle: "Add Room",
+
+    });
+}
+
+const getRoomList = (req,res,next) => {
+    return renderView(req, res, "pages/dashboard/pg-rooms/rooms", {
+        pageTitle: "Add Person",
+        rooms: false
+    });
+}
+
 module.exports = {
     getDashBoard,
     getAllPgPerson,
@@ -627,5 +647,8 @@ module.exports = {
     postEditGurdian,
     postPerson,
     getStates,
-    postVerifyCode
+    postVerifyCode,
+    getRoomFrm,
+    getCreateRoomFrm,
+    getRoomList
 }

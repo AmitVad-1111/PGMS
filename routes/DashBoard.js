@@ -18,7 +18,10 @@ const {
    postEditPerson,
    getEditGuardian,
    postEditGurdian,
-   postPerson
+   postPerson,
+   getRoomFrm,
+   getCreateRoomFrm,
+   getRoomList
 } = require("../controllers/admin/DashBoard");
 
 const uploadFields = [
@@ -44,11 +47,17 @@ router.post("/person/create-new/guardian-info", fileUploads.fields(uploadFields)
 router.get("/person/create-new/payment-info", getPaymentFrm);
 router.post("/person/create-new/payment-info", fileUploads.none(), paymentFormValidator(), postPaymentFrm);
 
+router.get("/person/create-new/room-info", getRoomFrm);
+
 router.get("/person/edit/personal",setCurrentUser,getEditPerson);
 router.post("/person/edit/personal",fileUploads.fields(uploadFields), personalInfoValidator(),postEditPerson)
 
 router.get("/person/edit/guardian",setCurrentUser,getEditGuardian);
 router.post("/person/edit/guardian",fileUploads.fields(uploadFields), parentGuardianValidator(),postEditGurdian)
+
+router.get("/rooms",getRoomList);
+router.get("/rooms/create",getCreateRoomFrm);
+
 
 // Ajax Routes
 router.post("/states", getStates);

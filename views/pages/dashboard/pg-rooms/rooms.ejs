@@ -1,0 +1,15 @@
+<%- include("../../../ui-components/dashboard/header.ejs") %>
+  <!-- sidebar -->
+<%- include("../../../ui-components/dashboard/sidebar.ejs") %>
+
+    <!-- main content -->
+<div class="flex flex-col flex-1 w-full">
+  <%- include("../../../ui-components/dashboard/navigation.ejs") %>
+  <main class="h-full overflow-y-auto">
+    <div class="container px-6 mx-auto grid">
+      <div class="stepperWrapper">
+        <%- include("../../../ui-components/dashboard/rooms/room-list.ejs") %>
+      </div>
+    </div>
+  </main>
+</div>
