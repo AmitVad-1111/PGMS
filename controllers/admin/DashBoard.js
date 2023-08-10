@@ -613,23 +613,78 @@ const postVerifyCode = async (req, res, next) => {
 
 const getRoomFrm = (req,res,next) =>{
     return renderView(req, res, "pages/dashboard/pg-person/rooms", {
-        pageTitle: "Add Person",
+        pageTitle: "Rooms",
     });
 }
 
 
 const getCreateRoomFrm = (req,res,next) => {
+    
+    if(req.session.roomInfo){
+        delete req.session.roomInfo;
+        delete req.session.uploadFiles;
+    }
+
     return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
         pageTitle: "Add Room",
-
     });
 }
 
-const getRoomList = (req,res,next) => {
+const getRoomList = async (req,res,next) => {
+    const rooms = new Rooms();
+    const roomList = await rooms.getRoomList();
     return renderView(req, res, "pages/dashboard/pg-rooms/rooms", {
-        pageTitle: "Add Person",
-        rooms: false
+        pageTitle: "Rooms",
+        rooms: roomList.length ? roomList : false
     });
+}
+
+const postCreateRoomFrm = async (req,res,next) =>{
+
+    const parseError = {}
+
+    if (!req.session.roomInfo) {
+        req.session.roomInfo = { ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles };
+    } else {
+        req.session.roomInfo = { ...req.session.roomInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
+    }
+
+    /**
+     * Fetch error from requrest object
+     */
+    const errors = validationResult(req);
+    /**
+     * If it has error then send error object and old data to the view
+     */
+
+    if (!errors.isEmpty()) {
+        const allError = errors.array();
+        allError.forEach(err => {
+            parseError[err.path] = err.msg
+        });
+
+        console.log(parseError);
+        return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
+            pageTitle: "Add room",
+            errorObj: parseError,
+            oldValue: req.session.roomInfo || false,
+        });
+
+    }
+    
+    const r = new Rooms();
+    const roomId = await r.addNewRoom(req.session.roomInfo);
+
+    if(roomId){
+        delete req.session.roomInfo;
+        return res.redirect("/dashboard/rooms");
+    }
+
+    // return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
+    //     pageTitle: "Add Room",
+    //     oldValue: false,
+    //     errorObj: false
+    // });
 }
 
 module.exports = {
@@ -650,5 +705,6 @@ module.exports = {
     postVerifyCode,
     getRoomFrm,
     getCreateRoomFrm,
+    postCreateRoomFrm,
     getRoomList
 }

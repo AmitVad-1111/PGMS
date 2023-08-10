@@ -1,17 +1,39 @@
 <div class="mt-5" data-content-section>
   <div data-section-personal>
-    <form method="post" name="add_new_person_1" enctype="multipart/form-data">
+    <form method="post" name="add_room" enctype="multipart/form-data">
       <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
         <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Add New Room</h4>
 
         <div class="flex w-full">
           <div class="w-1/2 mr-10">
             <label for="room_no">Room No/Name</label>
-            <input type="text" class="form-input border w-full" name="room_no" id="room_no">
+            <input 
+              type="text" 
+              class="form-input border w-full <%if(errorObj['room_no']){%>border-red-700<%}%>"
+              name="room_no" 
+              id="room_no" 
+              value="<%if(oldValue['room_no']){%><%=oldValue['room_no']%><%}%>">
+              <%if(errorObj["room_no"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["room_no"] %>
+                </span>
+              <%}%>
           </div>
           <div class="w-1/2 mr-10">
             <label for="room_location">Location</label>
-            <input type="text" placeholder="eg. Block A, Floor 1" class="form-input border w-full" name="room_location" id="room_location">
+            <input 
+              type="text" 
+              placeholder="eg. Block A, Floor 1" 
+              class="form-input border w-full <%if(errorObj['room_location']){%>border-red-700<%}%>" 
+              name="room_location" 
+              id="room_location"
+              value="<%if(oldValue['room_location']){%><%=oldValue['room_location']%><%}%>">
+              
+              <%if(errorObj["room_location"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["room_location"] %>
+                </span>
+              <%}%>
           </div>
         </div>
 
@@ -19,22 +41,70 @@
         <div class="flex w-full mt-5">
           <div class="w-1/2 mr-10">
             <label for="num_sharing">No. of Sharing</label>
-            <select class="form-input border w-full" name="num_sharing" id="num_sharing">
+            <select class="form-input border w-full <%if(errorObj['num_sharing']){%>border-red-700<%}%>" name="num_sharing" id="num_sharing">
                 <option value="">Choose Sharing</option>
                 <%[1,2,3,4,5].forEach(a => {%>
-                  <option value="<%=a%>"><%=a%></option>
+                  <%if(oldValue['num_sharing'] == a){%>
+                    <option value="<%=a%>" selected><%=a%></option>
+                  <%}else{%>
+                    <option value="<%=a%>"><%=a%></option>
+                  <%}%>
                 <%})%>
             </select>
+            <%if(errorObj["num_sharing"]){%>
+              <span class="text-red-700">
+                <%= errorObj["num_sharing"] %>
+              </span>
+            <%}%>
           </div>
 
           <div class="w-1/2 mr-10">
             <label for="room_image">Room Image</label>
-            <input type="file" class="form-input border w-full"
-              name="room_image" id="room_image">
+            <input 
+              type="file" 
+              class="form-input border w-full <%if(errorObj['room_image']){%>border-red-700<%}%>"
+              name="room_image" 
+              id="room_image"
+              value="<%if(oldValue['room_image']){%><%=oldValue['room_image']%><%}%>">
+
+              <%if(errorObj["room_image"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["room_image"] %>
+                </span>
+              <%}%>
           </div>
         </div>
 
+        <div class="w-full border mt-5 p-3 <%if(errorObj['room_facility']){%>border-red-700<%}%>">
+          <label>Room Facilities</label>
+          <div class="flex items-center mt-2">
+              <%["ac","wifi","attached bathroom","tv","fridge","water cooler"].forEach(f => {%>
+                <label for="room_is_<%=f.replaceAll(' ','_')%>" class="mr-5">
+                <input 
+                  type="checkbox" 
+                  name="room_facility[]"
+                  id="room_is_<%=f.replaceAll(' ','_')%>"
+                  <% if(oldValue['room_facility'] && oldValue['room_facility'].length > 0 && oldValue['room_facility'].includes(f)){%>
+                    checked
+                  <%}%>
+                  value="<%=f%>">
+                  <span class="capitalize"><%=f%></span>
+              </label>
+              <% })%>
 
+              <%if(errorObj["room_facility"]){%>
+                <span class="text-red-700">
+                  <%= errorObj["room_facility"] %>
+                </span>
+              <%}%>
+          </div>
+        </div>
+
+        <% if(isedit) {%>
+          <input type="hidden" name="pid" value="<%=rid%>">
+          <input type="hidden" name="mode" value="edit">
+        <%}%>
+         
         <div class="w-full text-end">
           <button next-step-btn class="
               bg-purple-700

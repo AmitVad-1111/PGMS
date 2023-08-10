@@ -18,6 +18,10 @@ const getDirPath = (file) => {
     return dirPath + "/pg-docs";
   }
 
+  if(file.fieldname == "room_image"){
+    return dirPath + "/pg-room";
+  }
+
   return dirPath;
 }
 
@@ -56,6 +60,11 @@ const Storage = multer.diskStorage({
       file.fieldname == 'person2-doc-back') {
       prefix = "person-doc-";
       relPath = "/pg-docs";
+    }
+
+    if(file.fieldname == "room_image"){
+      prefix = "room-img-";
+      relPath = "/pg-room";
     }
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + "." + file.mimetype.split("/")[1];
     req.session.uploadFiles[file.fieldname] = `${relPath}/${prefix}${uniqueSuffix}`;

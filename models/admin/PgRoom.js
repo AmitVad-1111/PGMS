@@ -17,9 +17,18 @@ const RoomSchema = mongoose.Schema({
     type:String,
     require:true
   },
+  room_facility:{
+    type: Array,
+    default:[],
+  },
   room_mates:[
     {type:objectId ,ref:"pg_user"}
   ],
+},{ 
+  timestamps: { 
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  } 
 });
 
 module.exports = mongoose.model("pg_room",RoomSchema);

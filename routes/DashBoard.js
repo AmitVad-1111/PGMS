@@ -2,6 +2,7 @@ const express = require("express");
 const fileUploads = require("../utils/file-upload-helper");
 const setCurrentUser = require("../middelware/set-current");
 const { personalInfoValidator, parentGuardianValidator, paymentFormValidator } = require("../validation-rules/admin/new-person-validator");
+const roomValidator = require("../validation-rules/admin/add-room-validation");
 const router = express.Router();
 const {
    getDashBoard,
@@ -21,6 +22,7 @@ const {
    postPerson,
    getRoomFrm,
    getCreateRoomFrm,
+   postCreateRoomFrm,
    getRoomList
 } = require("../controllers/admin/DashBoard");
 
@@ -29,14 +31,15 @@ const uploadFields = [
    { name: 'person-doc-front', maxCount: 1 },
    { name: 'person-doc-back', maxCount: 1 },
    { name: 'person2-doc-front', maxCount: 1 },
-   { name: 'person2-doc-back', maxCount: 1 }
+   { name: 'person2-doc-back', maxCount: 1 },
+   { name: 'room_image', maxCount: 1 }
 ]
 
 
 router.get("/", getDashBoard);
 
 router.get("/person", getAllPgPerson);
-router.post("/person",fileUploads.none(),postPerson);
+router.post("/person", fileUploads.none(), postPerson);
 
 router.get("/person/create-new/personal-info", getNewPgPersonFrm);
 router.post("/person/create-new/personal-info", fileUploads.fields(uploadFields), personalInfoValidator(), postNewPgPersonFrm);
@@ -49,18 +52,19 @@ router.post("/person/create-new/payment-info", fileUploads.none(), paymentFormVa
 
 router.get("/person/create-new/room-info", getRoomFrm);
 
-router.get("/person/edit/personal",setCurrentUser,getEditPerson);
-router.post("/person/edit/personal",fileUploads.fields(uploadFields), personalInfoValidator(),postEditPerson)
+router.get("/person/edit/personal", setCurrentUser, getEditPerson);
+router.post("/person/edit/personal", fileUploads.fields(uploadFields), personalInfoValidator(), postEditPerson)
 
-router.get("/person/edit/guardian",setCurrentUser,getEditGuardian);
-router.post("/person/edit/guardian",fileUploads.fields(uploadFields), parentGuardianValidator(),postEditGurdian)
+router.get("/person/edit/guardian", setCurrentUser, getEditGuardian);
+router.post("/person/edit/guardian", fileUploads.fields(uploadFields), parentGuardianValidator(), postEditGurdian)
 
-router.get("/rooms",getRoomList);
-router.get("/rooms/create",getCreateRoomFrm);
+router.get("/rooms", getRoomList);
+router.get("/rooms/create", getCreateRoomFrm);
+router.post("/rooms/create", fileUploads.fields(uploadFields), roomValidator(), postCreateRoomFrm);
 
 
 // Ajax Routes
 router.post("/states", getStates);
-router.post("/verifycode",postVerifyCode);
+router.post("/verifycode", postVerifyCode);
 
 module.exports = router;

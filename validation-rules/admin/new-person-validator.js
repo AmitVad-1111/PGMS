@@ -140,7 +140,7 @@ const personalInfoValidator = () => {
     /* ----------------------------------------------------------------------------------- */
     check("person-doc-front").custom((value, { req }) => {
       const mode = req.body?.mode || undefined;
-      if (mode && mode == "edit" && req.session?.userInfo["person-image"] == "") {
+      if (mode && mode == "edit" && req.session?.userInfo["person-doc-front"] == "") {
         return fileUplaodCustomLogic(req, "person-doc-front", "Please upload ID document");
       } else if (mode == undefined) {
         return fileUplaodCustomLogic(req, "person-doc-front", "Please upload ID document");
@@ -152,7 +152,7 @@ const personalInfoValidator = () => {
     check("person-doc-back").custom((value, { req }) => {
       if (req.body["person-doc-type"] == "aadhar") {
         const mode = req.body?.mode || undefined;
-        if (mode && mode == "edit" && req.session?.userInfo["person-image"] == "") {
+        if (mode && mode == "edit" && req.session?.userInfo["person-doc-back"] == "") {
           return fileUplaodCustomLogic(req, "person-doc-back", "Please upload ID document");
         } else if (mode == undefined) {
           return fileUplaodCustomLogic(req, "person-doc-back", "Please upload ID document");

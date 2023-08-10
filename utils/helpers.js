@@ -26,6 +26,9 @@ const renderViews = (reqObj,resobj,view,payload) =>{
                 isVerificationPending: true,
                 currentTab:"personal",
                 successMsg: false
+            },
+            "pages/dashboard/pg-rooms/create-room":{
+                isedit:false,
             }
         }
 
