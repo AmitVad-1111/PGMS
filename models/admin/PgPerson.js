@@ -101,8 +101,9 @@ const PgPersonSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref:"pg_payment"
   },
-  room_number: {
-    type: String
+  room_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"pg_room"
   }
 }, {
   timestamps: {

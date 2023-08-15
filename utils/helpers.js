@@ -2,13 +2,13 @@ const renderViews = (reqObj,resobj,view,payload) =>{
     if(view.length){
         let defaults = {
             pageTitle: '',
-            errorObj:'',
+            errorObj:false,
             successMessage:'',
             infoMessage:'',
             errorMessage:'',
             user: reqObj?.session?.user ? reqObj?.session?.user : '',
             isUserLoggedIn: reqObj?.session?.isLoggedIn ? reqObj.session.isLoggedIn : false,
-            oldValue:'',
+            oldValue:false,
             status:200,
         }
 

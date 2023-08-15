@@ -21,9 +21,14 @@ const {
    postEditGurdian,
    postPerson,
    getRoomFrm,
+   postRoomFrm,
    getCreateRoomFrm,
    postCreateRoomFrm,
-   getRoomList
+   getRoomEdit,
+   postRoomEdit,
+   removeRoom,
+   getRoomList,
+   clearAllSessionData
 } = require("../controllers/admin/DashBoard");
 
 const uploadFields = [
@@ -36,9 +41,19 @@ const uploadFields = [
 ]
 
 
+
+/******************************************************
+ * DashBoar Routes
+ ******************************************************/
 router.get("/", getDashBoard);
 
+
+/******************************************************
+ * PG Inmates Routes
+ ******************************************************/
 router.get("/person", getAllPgPerson);
+
+//remove person
 router.post("/person", fileUploads.none(), postPerson);
 
 router.get("/person/create-new/personal-info", getNewPgPersonFrm);
@@ -51,6 +66,7 @@ router.get("/person/create-new/payment-info", getPaymentFrm);
 router.post("/person/create-new/payment-info", fileUploads.none(), paymentFormValidator(), postPaymentFrm);
 
 router.get("/person/create-new/room-info", getRoomFrm);
+router.post("/person/create-new/room-info",fileUploads.none(),postRoomFrm);
 
 router.get("/person/edit/personal", setCurrentUser, getEditPerson);
 router.post("/person/edit/personal", fileUploads.fields(uploadFields), personalInfoValidator(), postEditPerson)
@@ -58,13 +74,24 @@ router.post("/person/edit/personal", fileUploads.fields(uploadFields), personalI
 router.get("/person/edit/guardian", setCurrentUser, getEditGuardian);
 router.post("/person/edit/guardian", fileUploads.fields(uploadFields), parentGuardianValidator(), postEditGurdian)
 
+
+/******************************************************
+ * PG Room Routes
+ ******************************************************/
 router.get("/rooms", getRoomList);
 router.get("/rooms/create", getCreateRoomFrm);
 router.post("/rooms/create", fileUploads.fields(uploadFields), roomValidator(), postCreateRoomFrm);
+router.get("/rooms/edit",getRoomEdit);
+router.post("/rooms/edit",fileUploads.fields(uploadFields), roomValidator(),postRoomEdit)
+router.post("/rooms/remove",fileUploads.none(),removeRoom);
 
 
-// Ajax Routes
+
+/******************************************************
+ * Ajax Route
+ ******************************************************/
 router.post("/states", getStates);
 router.post("/verifycode", postVerifyCode);
+router.post("/session/destroy",clearAllSessionData);
 
 module.exports = router;

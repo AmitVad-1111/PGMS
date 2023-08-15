@@ -35,7 +35,7 @@ const getAllPgPerson = async (req, res, next) => {
     });
 }
 
-const postPerson = async (req,res,next) => {
+const postPerson = async (req, res, next) => {
     const pid = req.body.person_id;
     const p = new Person(pid);
     await p.removePerson();
@@ -155,11 +155,11 @@ const postNewPgPersonFrm = async (req, res, next) => {
         req.session.userInfo['person-mobile-verified'] = false;
         // req.session.userInfo['person-mobile-verified'] = true;
 
-        if(process.env.TWILLIO_ENABLED == "true"){
+        if (process.env.TWILLIO_ENABLED == "true") {
             const formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
             const r = await sendSMS(formatedNumber);
             console.log(r);
-        }else{
+        } else {
 
         }
 
@@ -222,7 +222,7 @@ const postNewPgPersonGuardianFrm = async (req, res, next) => {
 
         // req.session.userInfo['person2-mobile-verified'] = true;
 
-        if(process.env.TWILLIO_ENABLED == "true"){
+        if (process.env.TWILLIO_ENABLED == "true") {
             const formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
             const r = await sendSMS(formatedNumber);
             console.log(r);
@@ -250,9 +250,9 @@ const getPaymentFrm = async (req, res, next) => {
      * if not completed then redirect user to the first step 
      */
     if (req.session.currentPerson == undefined) {
-        res.redirect("/dashboard/person/create-new/personal-info");
+        res.redirect("/dashboard/person/create-new/personal-info?is=new");
     }
-    
+
 
     try {
         // let payData = [];
@@ -263,7 +263,7 @@ const getPaymentFrm = async (req, res, next) => {
         const allTags = await payments.getPaymentTags();
         renderView(req, res, "pages/dashboard/pg-person/payment", {
             pageTitle: "Add New Person",
-            payTags : allTags.length ? allTags : false
+            payTags: allTags.length ? allTags : false
             // oldValue: payData[0] || false
         });
     } catch (err) {
@@ -322,7 +322,7 @@ const postPaymentFrm = async (req, res, next) => {
     return renderView(req, res, "pages/dashboard/pg-person/payment", {
         pageTitle: "Add New Person",
         paymentadded: paymentadded,
-        payTags : allTags.length ? allTags : false
+        payTags: allTags.length ? allTags : false
     });
 
 }
@@ -375,16 +375,16 @@ const postEditPerson = async (req, res, next) => {
         const isVerified = req.session?.userInfo ? req.session?.isMobileVerified : true;
         if (!isVerified) {
             const formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
-            if(process.env.TWILLIO_ENABLED == "true"){
+            if (process.env.TWILLIO_ENABLED == "true") {
                 const r = await sendSMS(formatedNumber);
                 console.log(r);
                 console.log("TWILLIO_ENABLED: Yes");
-            }else{
+            } else {
                 console.log("TWILLIO_ENABLED: NO");
             }
 
         }
-        
+
         return renderView(req, res, "pages/dashboard/pg-person/editPerson", {
             pageTitle: "Edit Person",
             country: getAllCountry,
@@ -437,6 +437,7 @@ const getEditGuardian = async (req, res, next) => {
         currentTab: "guardian"
     });
 }
+
 const postEditGurdian = async (req, res, next) => {
     const uid = req.body.pid;
     const parseError = {};
@@ -467,11 +468,11 @@ const postEditGurdian = async (req, res, next) => {
         const isVerified = req.session?.userInfo ? req.session?.isMobileVerified2 : true;
         if (!isVerified) {
             const formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
-            if(process.env.TWILLIO_ENABLED == "true"){
+            if (process.env.TWILLIO_ENABLED == "true") {
                 const r = await sendSMS(formatedNumber);
                 console.log(r);
                 console.log("TWILLIO_ENABLED: Yes");
-            }else{
+            } else {
                 console.log("TWILLIO_ENABLED: NO");
             }
         }
@@ -514,7 +515,6 @@ const postEditGurdian = async (req, res, next) => {
 
 }
 
-
 const getStates = (req, res, next) => {
     try {
         const states = getAllStates[req.body.country] || null;
@@ -531,7 +531,7 @@ const getStates = (req, res, next) => {
 const postVerifyCode = async (req, res, next) => {
     const code = parseInt(req.body.vcode);
     const mode = req.body.mode;
-    
+
     if (code > 0) {
         let formatedNumber;
         if (req.session.userInfo == undefined) {
@@ -542,16 +542,16 @@ const postVerifyCode = async (req, res, next) => {
             }));
         }
 
-        if(mode == "edit"){
+        if (mode == "edit") {
             const verificatinType = req.session.verify_for;
-            if(verificatinType == "personal"){
+            if (verificatinType == "personal") {
                 formatedNumber = getFormatedNumber(req.session.userInfo['person-country'], req.session.userInfo['person-mobile']);
             }
 
-            if(verificatinType == "guardian"){
+            if (verificatinType == "guardian") {
                 formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
             }
-        }else{
+        } else {
             if (req.session.userInfo['person-mobile-verified']) {
                 formatedNumber = getFormatedNumber(req.session.userInfo['person2-country'], req.session.userInfo['person2-mobile']);
             } else {
@@ -559,15 +559,11 @@ const postVerifyCode = async (req, res, next) => {
             }
         }
 
-        console.log("Verification Mode:", mode)
-        console.log("Verificaton Code: ",code);
-        console.log("Verificaton For: ", formatedNumber);
-
         let response;
-        if(process.env.TWILLIO_ENABLED == "true"){
+        if (process.env.TWILLIO_ENABLED == "true") {
             response = await verifyCode(formatedNumber, code);
-        }else{
-            response = code == 121212 ? "approved": false;
+        } else {
+            response = code == 121212 ? "approved" : false;
         }
 
         if (response == "approved") {
@@ -578,19 +574,19 @@ const postVerifyCode = async (req, res, next) => {
             }
 
             //for edit person
-            if(mode == "edit"){
+            if (mode == "edit") {
                 const verificatinType = req.session.verify_for;
-                if(verificatinType == "personal"){
+                if (verificatinType == "personal") {
                     req.session.isMobileVerified = true;
                 }
-    
-                if(verificatinType == "guardian"){
+
+                if (verificatinType == "guardian") {
                     req.session.isMobileVerified2 = true;
                 }
             }
 
             delete req.session.verify_for;
- 
+
             res.send(JSON.stringify({
                 success: true,
                 data: "verified"
@@ -611,16 +607,65 @@ const postVerifyCode = async (req, res, next) => {
     }
 }
 
-const getRoomFrm = (req,res,next) =>{
-    return renderView(req, res, "pages/dashboard/pg-person/rooms", {
-        pageTitle: "Rooms",
+const getRoomFrm = async (req, res, next) => {
+
+    /**
+     * If user direct request this page then check if user completed previous steps
+     * if not completed then redirect user to the first step 
+     */
+    if (req.session.currentPerson == undefined) {
+        return res.redirect("/dashboard/person/create-new/personal-info?is=new");
+    }
+
+    const rooms = new Rooms();
+    const roomList = await rooms.getRoomList();
+
+    const rl = {};
+    roomList.length && roomList.forEach(r => {
+        //check if room full or there is space available for new roommate
+        if (r.room_mates.length < r.num_of_sharing) {
+            rl[r.room_no] = `${r.room_no} | ${r.room_location}`;
+        }
+    })
+    return renderView(req, res, "pages/dashboard/pg-person/add-roommate", {
+        pageTitle: "Add Roommate",
+        rooms: Object.keys(rl).length ? rl : false
     });
 }
 
+const postRoomFrm = async (req, res, next) => {
+    const rooms = new Rooms();
+    const m = await rooms.addRoomMate(req.body.room_no, req.session.currentPerson);
+    const roomList = await rooms.getRoomList();
 
-const getCreateRoomFrm = (req,res,next) => {
-    
-    if(req.session.roomInfo){
+
+    console.log(m);
+    if(m){
+        delete req.session.step1;
+        delete req.session.step2;
+        delete req.session.uploadFiles;
+        delete req.session.userInfo;
+        delete req.session.currentPerson;
+        return res.redirect("/dashboard/person");
+    }else{
+        const rl = {};
+        roomList.length && roomList.forEach(r => {
+            //check if room full or there is space available for new roommate
+            if (r.room_mates.length < r.num_of_sharing) {
+                rl[r.room_no] = `${r.room_no} | ${r.room_location}`;
+            }
+        });
+        return renderView(req, res, "pages/dashboard/pg-person/add-roommate", {
+            pageTitle: "Add Roommate",
+            rooms: Object.keys(rl).length ? rl : false
+        });
+    }
+
+}
+
+const getCreateRoomFrm = (req, res, next) => {
+
+    if (req.session.roomInfo) {
         delete req.session.roomInfo;
         delete req.session.uploadFiles;
     }
@@ -630,7 +675,7 @@ const getCreateRoomFrm = (req,res,next) => {
     });
 }
 
-const getRoomList = async (req,res,next) => {
+const getRoomList = async (req, res, next) => {
     const rooms = new Rooms();
     const roomList = await rooms.getRoomList();
     return renderView(req, res, "pages/dashboard/pg-rooms/rooms", {
@@ -639,7 +684,7 @@ const getRoomList = async (req,res,next) => {
     });
 }
 
-const postCreateRoomFrm = async (req,res,next) =>{
+const postCreateRoomFrm = async (req, res, next) => {
 
     const parseError = {}
 
@@ -663,7 +708,6 @@ const postCreateRoomFrm = async (req,res,next) =>{
             parseError[err.path] = err.msg
         });
 
-        console.log(parseError);
         return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
             pageTitle: "Add room",
             errorObj: parseError,
@@ -671,12 +715,13 @@ const postCreateRoomFrm = async (req,res,next) =>{
         });
 
     }
-    
+
     const r = new Rooms();
     const roomId = await r.addNewRoom(req.session.roomInfo);
 
-    if(roomId){
+    if (roomId) {
         delete req.session.roomInfo;
+        delete req.session.uploadFiles;
         return res.redirect("/dashboard/rooms");
     }
 
@@ -685,6 +730,78 @@ const postCreateRoomFrm = async (req,res,next) =>{
     //     oldValue: false,
     //     errorObj: false
     // });
+}
+
+const getRoomEdit = async (req, res, next) => {
+    const { rid } = req.query;
+    const gr = new Rooms(rid);
+    const grData = await gr.getRoom();
+    return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
+        pageTitle: "Add Room",
+        isedit: true,
+        oldValue: grData || false,
+        rid: grData.id
+    });
+}
+
+const postRoomEdit = async (req, res, next) => {
+
+    const parseError = {};
+    const { rid } = req.body;
+    const gr = new Rooms(rid);
+    const grData = await gr.getRoom();
+
+    req.body["room_image"] = grData.room_image;
+
+    if (!req.session.roomInfo) {
+        req.session.roomInfo = { ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles };
+    } else {
+        delete req.session.roomInfo;
+        req.session.roomInfo = { ...req.session.roomInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
+    }
+
+    /**
+     * Fetch error from requrest object
+     */
+    const errors = validationResult(req);
+    /**
+     * If it has error then send error object and old data to the view
+     */
+
+    if (!errors.isEmpty()) {
+        const allError = errors.array();
+        allError.forEach(err => {
+            parseError[err.path] = err.msg
+        });
+
+        return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
+            pageTitle: "Add room",
+            isedit: true,
+            errorObj: parseError,
+            oldValue: req.session.roomInfo || false,
+            rid: rid
+        });
+
+    }
+    const isRoomUpdated = await gr.editRoom(req.session.roomInfo);
+    if (isRoomUpdated) {
+        delete req.session.roomInfo;
+        delete req.session.uploadFiles;
+        return res.redirect("/dashboard/rooms");
+    }
+
+}
+
+const removeRoom = async (req, res, next) => {
+    console.log("Remove =>>>>", req.body.room_id);
+    const j = new Rooms(req.body.room_id);
+    await j.removeRoom();
+    return res.redirect("/dashboard/rooms");
+}
+
+const clearAllSessionData =(req,res,next) => {
+    console.log("sesseion cleared");
+    next()
 }
 
 module.exports = {
@@ -704,7 +821,12 @@ module.exports = {
     getStates,
     postVerifyCode,
     getRoomFrm,
+    postRoomFrm,
     getCreateRoomFrm,
     postCreateRoomFrm,
-    getRoomList
+    getRoomEdit,
+    postRoomEdit,
+    removeRoom,
+    getRoomList,
+    clearAllSessionData
 }

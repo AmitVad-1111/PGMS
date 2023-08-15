@@ -1,4 +1,5 @@
 const {check,body} = require("express-validator");
+const PgRoom = require("../../models/admin/PgRoom");
 
 const fileUplaodCustomLogic = (req, field, defaultError) => {
   const uploadFiles = req.files == undefined ? null : JSON.parse(JSON.stringify(req?.files));
@@ -29,7 +30,24 @@ const roomValidator = () =>{
       .isLength({ max: 50 })
       .withMessage("Name is too big")
       .matches("^[a-zA-Z0-9- ]+$")
-      .withMessage("you can only use alphanumeric , space and (-) dash"),
+      .withMessage("you can only use alphanumeric, space and (-) dash")
+      .custom(async (value,{req}) => {
+        const name = value?.trim();
+        const mode = req.body?.mode || undefined;
+        if(name?.length == 0){
+          throw new Error("Please enter valid room name");
+        }else if(name?.length){
+          const d = await PgRoom.findOne({room_no: name});
+          if(mode == "edit" && d && d._id != req.body.rid){
+            throw new Error("Room alredy added with this name, please use different name");
+          }else if(mode == undefined){
+            if(d){
+              throw new Error("Room alredy added with this name, please use different name");
+            }
+          }
+        }
+        return true;
+      }),
     /* ----------------------------------------------------------------------------------- */
       body("room_location").custom((value,{req})=>{
         if(value.trim() == ""){
@@ -54,7 +72,8 @@ const roomValidator = () =>{
     /* ----------------------------------------------------------------------------------- */
     check("room_image").custom((value, { req }) => {
       const mode = req.body?.mode || undefined;
-      if (mode && mode == "edit" && req.session?.userInfo["room_image"] == "") {
+      console.log(req.body)
+      if (mode && mode == "edit" && req.body.rimg == "") {
         return fileUplaodCustomLogic(req, "room_image", "Please upload room image");
       } else if (mode == undefined) {
         return fileUplaodCustomLogic(req, "room_image", "Please upload room image");

@@ -60,13 +60,13 @@ const fillState = (countryEL, stateEL) => {
     }
 }
 
-function callRemoveCta(){
+function callRemoveCta(msg){
     const removeBtn = document.querySelectorAll("[data-remove]");
     removeBtn.length && removeBtn.forEach(rbtn => {
         rbtn.addEventListener("click",(e)=>{
             console.log(e.target.parentNode);
             Swal.fire({
-                title: 'Do you want to delete this person?',
+                title: msg,
                 icon:"question",
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -295,9 +295,12 @@ function main() {
             customTab();
         },
         "/dashboard/person": () => {
-            callRemoveCta();
-            
+            callRemoveCta('Do you want to delete this person?');
         },
+        "/dashboard/rooms": () => {
+            callRemoveCta('Do you want to delete this room?');
+        },
+
     }
 
     if (Object.keys(callDict).includes(pathName)) {
@@ -315,6 +318,13 @@ function main() {
             }
         }
     }
+
+    window.addEventListener("onunload",function(){
+        sendRequest("/dashboard/session/destroy", {
+            method: "GET",
+        });
+    });
+    
 }
 
 

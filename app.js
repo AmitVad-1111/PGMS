@@ -48,7 +48,3 @@ mongoos.connect(process.env.DB_PTAH_LOCAL)
     }).catch(err => {
         console.log(err);
     })
-
-
-
-

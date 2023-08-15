@@ -72,6 +72,14 @@
                   <%= errorObj["room_image"] %>
                 </span>
               <%}%>
+
+              <%if(oldValue['room_image']){%>
+                <div class="border border-gray-500 w-24 h-24 mt-3">
+                  <img src="/images/uploads<%=oldValue['room_image']%>" class="w-24 h-24 p-1"
+                    alt="<%=oldValue['room_no']%>">
+                </div>
+              <%}%>
+
           </div>
         </div>
 
@@ -79,11 +87,11 @@
           <label>Room Facilities</label>
           <div class="flex items-center mt-2">
               <%["ac","wifi","attached bathroom","tv","fridge","water cooler"].forEach(f => {%>
-                <label for="room_is_<%=f.replaceAll(' ','_')%>" class="mr-5">
+                <label for="room_is_<%=f.replace(' ','_')%>" class="mr-5">
                 <input 
                   type="checkbox" 
                   name="room_facility[]"
-                  id="room_is_<%=f.replaceAll(' ','_')%>"
+                  id="room_is_<%=f.replace(' ','_')%>"
                   <% if(oldValue['room_facility'] && oldValue['room_facility'].length > 0 && oldValue['room_facility'].includes(f)){%>
                     checked
                   <%}%>
@@ -101,7 +109,8 @@
         </div>
 
         <% if(isedit) {%>
-          <input type="hidden" name="pid" value="<%=rid%>">
+          <input type="hidden" name="rid" value="<%=rid%>">
+          <input type="hidden" name="rimg" value="<%if(oldValue['room_image']){%><%=oldValue['room_image']%><%}%>">
           <input type="hidden" name="mode" value="edit">
         <%}%>
          
@@ -113,7 +122,7 @@
               mt-10
               text-white
             ">
-            Create Room
+            <% if(isedit) {%>Save Changes<%}else{%>Create Room<%}%>
           </button>
         </div>
       </div>
