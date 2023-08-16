@@ -1,14 +1,14 @@
 <ul class="stepper-list shadow-sm rounded-lg">
-  <li class="stepper-items stepper-items-after step1-completed">
-    <spna class="step-number step-success">1</spna>
+  <li class="stepper-items stepper-items-after ">
+    <spna class="step-number <%if(steps.step1){%>step-success<%}%>">1</spna>
     <span class="step-info">Personal Info</span>
   </li>
   <li class="stepper-items stepper-items-after">
-    <spna class="step-number">2</spna>
+    <spna class="step-number <%if(steps.step2){%>step-success<%}%>">2</spna>
     <span class="step-info">Perent/Guardian Details</span>
   </li>
   <li class="stepper-items stepper-items-after">
-    <spna class="step-number">3</spna>
+    <spna class="step-number <%if(steps.step3){%>step-success<%}%>">3</spna>
     <span class="step-info">Payment</span>
   </li>
   <li class="stepper-items stepper-items-after">

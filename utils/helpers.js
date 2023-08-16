@@ -12,15 +12,24 @@ const renderViews = (reqObj,resobj,view,payload) =>{
             status:200,
         }
 
+        let creatPersonSteps = {
+            step1 : reqObj.session?.step1?.isCompleted || false,
+            step2 : reqObj.session?.step2?.isCompleted || false,
+            step3 : reqObj.session?.step3?.isCompleted || false,
+        }
+
         let viewDefaults =  {
             "pages/dashboard/pg-person/create-person":{
-                isedit:false
+                isedit:false,
+                steps: creatPersonSteps
             },
             "pages/dashboard/pg-person/person-guardian":{
                 isedit:false,
+                steps: creatPersonSteps
             },
             "pages/dashboard/pg-person/payment":{
-                paymentadded: false
+                paymentadded: false,
+                steps: creatPersonSteps
             },
             "pages/dashboard/pg-person/editPerson":{
                 isVerificationPending: true,
@@ -29,6 +38,9 @@ const renderViews = (reqObj,resobj,view,payload) =>{
             },
             "pages/dashboard/pg-rooms/create-room":{
                 isedit:false,
+            },
+            "pages/dashboard/pg-person/add-roommate":{
+                steps: creatPersonSteps
             }
         }
 

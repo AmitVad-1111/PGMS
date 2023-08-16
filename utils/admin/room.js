@@ -224,10 +224,41 @@ class Rooms {
 
       }else{
         throw new Error("Room not found");
-      }
-      
+      }      
     }
 
+  }
+
+  /***************************************
+   * Remove inmate from room
+   * @param room_id
+   * @param person_id
+   * @returns aknowladgement
+   ***************************************/
+
+  async removeInmateFromRoom(room_id, person_id){
+    if(room_id){
+      const r = await PgRooms.updateOne({_id:room_id},{
+        $pullAll: {room_mates:[person_id]}
+      })
+      if(r){
+        return r;
+        // if(r.room_mates.includes(person_id)){
+        //   const rm = r.room_mates.map(p =>{
+        //     if(p != person_id){
+        //       return p;
+        //     }
+        //   });
+
+        //   r.room_mates = rm;
+        //   const result = await r.save();
+        //   return result;
+        // }
+
+      }else{
+        throw new Error("Room not found");
+      }      
+    }
   }
 }
 

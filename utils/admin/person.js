@@ -3,6 +3,7 @@ const PgPayment = require("../../models/admin/PgPayment");
 const Payments = require("../../utils/admin/payments");
 const fs = require("fs");
 const path = require("path");
+const Rooms = require("../admin/room");
 
 function formatDate(date) {
   let m = date.getMonth() + 1;
@@ -382,6 +383,9 @@ class Person {
             }
           }
           
+          const r = new Rooms();
+          const result = await r.removeInmateFromRoom(thatPerson.room_id,this.personId);
+          console.log("person removed from room", result);
           await PgPerson.deleteOne({_id:this.personId})
         }
       }catch(err){

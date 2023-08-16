@@ -84,6 +84,27 @@ function callRemoveCta(msg){
 }
 
 
+const PopupObject = {
+    popupOverlay : document.querySelector("[data-model-overlay]"),
+    popupBox : document.querySelector("[data-model]"),
+    closeBtn : document.querySelector("[data-model] .cursor-pointer"),
+    openPopup: () =>{
+        this.popupOverlay && this.popupOverlay.classList.add("hidden");
+        this.popupBox && this.popupBox.classList.add("hidden");
+    },
+    showLoader : (hide = false) => {
+        // if (hide) {
+        //     stateVerify && stateVerify.classList.add("hidden");
+        //     return;
+        // }
+        // stateVerify && stateVerify.classList.remove("hidden");
+    },
+    closePopup : () => {
+        this.popupOverlay && this.popupOverlay.classList.add("hidden");
+        this.popupBox && this.popupBox.classList.add("hidden");
+    }
+}
+
 const createPersonScript = () => {
     const countryEL = document.querySelector("#person-country");
     const stateEL = document.querySelector("#person-state");
@@ -281,6 +302,17 @@ const customTab = () => {
     }
 }
 
+const openInfoPopup = (elment) => {
+    if(elment.length){
+        elment.forEach(el => {
+            el.addEventListener("click",(e)=>{
+                let id = event.currentTarget.parentNode.querySelector(`[name="room_id"]`).value;
+                
+            })
+        })        
+    }
+}
+
 function main() {
     const pathName = window.location.pathname;
     const callDict = {
@@ -299,6 +331,7 @@ function main() {
         },
         "/dashboard/rooms": () => {
             callRemoveCta('Do you want to delete this room?');
+            openInfoPopup(document.querySelectorAll("[data-infoPopup]"));
         },
 
     }

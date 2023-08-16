@@ -52,7 +52,6 @@ const getNewPgPersonFrm = async (req, res, next) => {
         delete req.session.step1;
         delete req.session.step2;
         delete req.session.step3;
-        delete req.session.step4;
     }
 
     if (req.session.currentPerson) {
@@ -253,6 +252,7 @@ const getPaymentFrm = async (req, res, next) => {
         res.redirect("/dashboard/person/create-new/personal-info?is=new");
     }
 
+    req.session.step3 = { isCompleted: req.session?.step3?.isCompleted || false };
 
     try {
         // let payData = [];
@@ -318,6 +318,8 @@ const postPaymentFrm = async (req, res, next) => {
 
     const payments = new Payments(req.session.currentPerson);
     const allTags = await payments.getPaymentTags();
+
+    req.session.step3.isCompleted = true;
 
     return renderView(req, res, "pages/dashboard/pg-person/payment", {
         pageTitle: "Add New Person",
@@ -638,11 +640,10 @@ const postRoomFrm = async (req, res, next) => {
     const m = await rooms.addRoomMate(req.body.room_no, req.session.currentPerson);
     const roomList = await rooms.getRoomList();
 
-
-    console.log(m);
     if(m){
         delete req.session.step1;
         delete req.session.step2;
+        delete req.session.step3;
         delete req.session.uploadFiles;
         delete req.session.userInfo;
         delete req.session.currentPerson;
