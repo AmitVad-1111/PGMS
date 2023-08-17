@@ -28,7 +28,8 @@ const {
    postRoomEdit,
    removeRoom,
    getRoomList,
-   clearAllSessionData
+   clearAllSessionData,
+   ajaxGetRoom
 } = require("../controllers/admin/DashBoard");
 
 const uploadFields = [
@@ -93,5 +94,6 @@ router.post("/rooms/remove",fileUploads.none(),removeRoom);
 router.post("/states", getStates);
 router.post("/verifycode", postVerifyCode);
 router.post("/session/destroy",clearAllSessionData);
+router.post("/getroom",ajaxGetRoom)
 
 module.exports = router;

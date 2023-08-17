@@ -805,6 +805,38 @@ const clearAllSessionData =(req,res,next) => {
     next()
 }
 
+const ajaxGetRoom = async (req,res,next) => {
+    const {roomId} = req.body
+    if(roomId){
+        const room = new Rooms(roomId);
+        const d = await room.getRoom();
+
+        let x = [];
+        d.room_mates.length && d.room_mates.forEach(pd => {
+            x.push({
+                name: pd.fullName,
+                mobile_no: `${getAllDialCode[pd.country]}-${pd.mobile_no}`,
+                profile: pd.profile_image
+            });
+        });
+
+        d.room_mates = x;
+
+        return res.status(200).send(JSON.stringify({
+            success: true,
+            data: d,
+            errMessage: null
+        }));
+    }
+
+    return res.status(404).send(JSON.stringify({
+        success: false,
+        data: null,
+        errMessage: "Room Not Found"
+    }));
+
+
+}
 module.exports = {
     getDashBoard,
     getAllPgPerson,
@@ -829,5 +861,6 @@ module.exports = {
     postRoomEdit,
     removeRoom,
     getRoomList,
-    clearAllSessionData
+    clearAllSessionData,
+    ajaxGetRoom
 }

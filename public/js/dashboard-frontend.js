@@ -60,22 +60,22 @@ const fillState = (countryEL, stateEL) => {
     }
 }
 
-function callRemoveCta(msg){
+function callRemoveCta(msg) {
     const removeBtn = document.querySelectorAll("[data-remove]");
     removeBtn.length && removeBtn.forEach(rbtn => {
-        rbtn.addEventListener("click",(e)=>{
+        rbtn.addEventListener("click", (e) => {
             console.log(e.target.parentNode);
             Swal.fire({
                 title: msg,
-                icon:"question",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
-              }).then((result) => {
+            }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
-                    const submitEvent = new CustomEvent("submit",{cancelable:true});
+                    const submitEvent = new CustomEvent("submit", { cancelable: true });
                     e.target.parentNode.requestSubmit();
-                } 
+                }
             });
         })
     })
@@ -85,23 +85,37 @@ function callRemoveCta(msg){
 
 
 const PopupObject = {
-    popupOverlay : document.querySelector("[data-model-overlay]"),
-    popupBox : document.querySelector("[data-model]"),
-    closeBtn : document.querySelector("[data-model] .cursor-pointer"),
-    openPopup: () =>{
+    popupOverlay: document.querySelector("[data-model-overlay]"),
+    popupBox: document.querySelector("[data-model]"),
+    popupContent: document.querySelector("[data-model] [data-content]"),
+    closeBtn: document.querySelector("[data-model] .cursor-pointer"),
+    loader: document.querySelector("[data-model] [data-loader]"),
+    openPopup: function () {
+        this.popupOverlay && this.popupOverlay.classList.remove("hidden");
+        this.popupBox && this.popupBox.classList.remove("hidden");
+    },
+    showLoader: function (hide = false) {
+        if (hide) {
+            this.loader && this.loader.classList.add("hidden");
+            return;
+        }
+        this.loader && this.loader.classList.remove("hidden");
+    },
+    showConent: function () {
+        this.popupContent && this.popupContent.classList.remove("hidden");
+    },
+    hideConent: function () {
+        this.popupContent && this.popupContent.classList.add("hidden");
+    },
+    closePopup: function () {
         this.popupOverlay && this.popupOverlay.classList.add("hidden");
         this.popupBox && this.popupBox.classList.add("hidden");
     },
-    showLoader : (hide = false) => {
-        // if (hide) {
-        //     stateVerify && stateVerify.classList.add("hidden");
-        //     return;
-        // }
-        // stateVerify && stateVerify.classList.remove("hidden");
-    },
-    closePopup : () => {
-        this.popupOverlay && this.popupOverlay.classList.add("hidden");
-        this.popupBox && this.popupBox.classList.add("hidden");
+    bindCloseEvent: function () {
+        const closePopupFn = this.closePopup.bind(this);
+        this.closeBtn && this.closeBtn.addEventListener("click", function () {
+            closePopupFn();
+        })
     }
 }
 
@@ -303,13 +317,115 @@ const customTab = () => {
 }
 
 const openInfoPopup = (elment) => {
-    if(elment.length){
+    if (elment.length) {
         elment.forEach(el => {
-            el.addEventListener("click",(e)=>{
-                let id = event.currentTarget.parentNode.querySelector(`[name="room_id"]`).value;
-                
-            })
-        })        
+            el.addEventListener("click", async function (e) {
+                let id = event.currentTarget.parentNode.querySelector(`[name="room_id"]`)?.value || 0;
+
+                if (!id) {
+                    Swal.fire({
+                        title: "Room Not Found",
+                        icon: "error",
+                    })
+                }
+
+                //open popup
+                PopupObject.openPopup();
+                PopupObject.showLoader();
+
+                const url = window.location.origin + "/dashboard/getroom";
+                const option = {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                        "accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        roomId: id || 0
+                    })
+                };
+                const res = await sendRequest(url, option);
+                if (res.success) {
+                    console.log(res);
+                    const roomD = res.data;
+                    PopupObject.showLoader(true);
+
+                    const avail_status = PopupObject.popupContent.querySelector(".avaibility");
+                    const full_status = PopupObject.popupContent.querySelector(".rfull");
+
+                    const profile = PopupObject.popupContent.querySelector(".room-image");
+                    const roomNo = PopupObject.popupContent.querySelector(".roomNo");
+                    const location = PopupObject.popupContent.querySelector(".location");
+                    const numSharing = PopupObject.popupContent.querySelector(".num_sharing");
+
+                    //check for availability
+                    const roomMates = PopupObject.popupContent.querySelector(".room_mates");
+                    if (roomD.room_mates.length > 0) {
+                        if (roomD.room_mates.length < roomD.num_sharing) {
+                            avail_status.classList.remove("hidden")
+                            full_status.classList.add("hidden")
+                        } else {
+                            avail_status.classList.add("hidden")
+                            full_status.classList.remove("hidden")
+                        }
+
+                        
+                        let h = '';
+                        roomD.room_mates.forEach(pd => {
+                            h += `
+                                <div class="flex pr-3 pb-1">
+                                    <div>
+                                        <img  src="/images/uploads${pd.profile}" alt="${pd.name}" class="w-[100px] h-[100px] border-2">
+                                    </div>  
+                                    <div class="pl-1">
+                                        <div class="font-semibold text-sm">${pd.name}</div>
+                                        <div class="font-semibold text-sm">${pd.mobile_no}</div>
+                                    </div>
+                                </div>
+                            `
+                        });
+
+                       if(roomMates){
+                        roomMates.innerHTML = h;
+                        roomMates.parentNode.style.display = "block";
+                       } 
+
+                    } else {
+                        avail_status.classList.remove("hidden");
+                        full_status.classList.add("hidden");
+                        if(roomMates){
+                            roomMates.innerHTML = '';
+                            roomMates.parentNode.style.display = "none";
+                        } 
+                    }
+
+                    profile.setAttribute("src", `/images/uploads${roomD.room_image}`)
+                    profile.setAttribute("alt", roomD.room_no);
+
+                    roomNo.innerHTML = roomD.room_no;
+                    location.innerHTML = roomD.room_location;
+                    numSharing.innerHTML = roomD.num_sharing;
+
+                    // roomD.room_facility.length && roomD.room_facility.forEach(f => {
+                    //     const fc = PopupObject.popupContent.querySelector(`[data-${f.replaceAll(" ","-")}]`);
+                    //     fc && fc.classList.add("processed");
+
+                    // })
+                    // const not_processed = PopupObject.popupContent.querySelectorAll(`.facility:not(.processed)`); 
+                    // not_processed.length && no
+
+                    PopupObject.showConent();
+
+                } else {
+                    PopupObject.showLoader(true);
+                    PopupObject.hideConent();
+                }
+            });
+
+        });
+
+        //bind popup close event
+        PopupObject.bindCloseEvent();
     }
 }
 
@@ -352,12 +468,12 @@ function main() {
         }
     }
 
-    window.addEventListener("onunload",function(){
+    window.addEventListener("onunload", function () {
         sendRequest("/dashboard/session/destroy", {
             method: "GET",
         });
     });
-    
+
 }
 
 

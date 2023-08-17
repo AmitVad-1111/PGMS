@@ -57,7 +57,7 @@ class Rooms {
       if (r) {
         r.room_no = rd.room_no;
         r.room_location = rd.room_location;
-        r.num_sharing = rd.num_of_sharing;
+        r.num_of_sharing = rd.num_sharing;
         r.room_image = rd.room_image;
         r.room_facility = rd.room_facility;
 
@@ -113,7 +113,7 @@ class Rooms {
   async getRoom() {
     if (this.room_id) {
       try {
-        const r = await PgRooms.findById(this.room_id);
+        const r = await PgRooms.findById(this.room_id).populate("room_mates");
         const roomData = {
           id: r._id,
           room_no: r.room_no,

@@ -86,7 +86,7 @@
         <div class="w-full border mt-5 p-3 <%if(errorObj['room_facility']){%>border-red-700<%}%>">
           <label>Room Facilities</label>
           <div class="flex items-center mt-2">
-              <%["ac","wifi","attached bathroom","tv","fridge","water cooler"].forEach(f => {%>
+              <%["ac","wifi","attached bathroom","tv","fridge","water purifire"].forEach(f => {%>
                 <label for="room_is_<%=f.replace(' ','_')%>" class="mr-5">
                 <input 
                   type="checkbox" 
