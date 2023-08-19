@@ -7,6 +7,16 @@ const Person = require("../../utils/admin/person");
 const Payments = require("../../utils/admin/payments");
 const Rooms = require("../../utils/admin/room");
 
+const roomFacility = {
+    "ac": "/icons/facility/ac.png",
+    "wifi":"/icons/facility/wifi.png",
+    "attached bathroom":"/icons/facility/bathroom.png",
+    "tv":"/icons/facility/tv.png",
+    "fridge":"/icons/facility/fridge.png",
+    "water purifire":"/icons/facility/water-cooler.png",
+    "personal wardrobe":"/icons/facility/wardrob.png"
+}
+
 const getCoutryDailCode = (c) => {
     if (Object.keys(getAllDialCode).length) {
         return getAllDialCode[c];
@@ -686,13 +696,24 @@ const getRoomList = async (req, res, next) => {
 }
 
 const postCreateRoomFrm = async (req, res, next) => {
-
+    
+    const k = [];
     const parseError = {}
 
     if (!req.session.roomInfo) {
         req.session.roomInfo = { ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles };
     } else {
         req.session.roomInfo = { ...req.session.roomInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
+    }
+
+    if(req.session.roomInfo['room_facility'] && req.session.roomInfo['room_facility'].length){
+        req.session.roomInfo['room_facility'].forEach(f =>{
+            k.push({
+                facility_title: f,
+                facility_icon: roomFacility[f]
+            }) 
+        })
+        req.session.roomInfo['room_facility'] = k;
     }
 
     /**
@@ -726,11 +747,11 @@ const postCreateRoomFrm = async (req, res, next) => {
         return res.redirect("/dashboard/rooms");
     }
 
-    // return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
-    //     pageTitle: "Add Room",
-    //     oldValue: false,
-    //     errorObj: false
-    // });
+    return renderView(req, res, "pages/dashboard/pg-rooms/create-room", {
+        pageTitle: "Add Room",
+        oldValue: false,
+        errorObj: false
+    });
 }
 
 const getRoomEdit = async (req, res, next) => {
@@ -751,6 +772,8 @@ const postRoomEdit = async (req, res, next) => {
     const { rid } = req.body;
     const gr = new Rooms(rid);
     const grData = await gr.getRoom();
+    const k = [];
+    
 
     req.body["room_image"] = grData.room_image;
 
@@ -760,6 +783,14 @@ const postRoomEdit = async (req, res, next) => {
         delete req.session.roomInfo;
         req.session.roomInfo = { ...req.session.roomInfo, ...JSON.parse(JSON.stringify(req.body)), ...req.session.uploadFiles }
     }
+
+    req.session.roomInfo['room_facility'].length && req.session.roomInfo['room_facility'].forEach(f =>{
+        k.push({
+            facility_title: f,
+            facility_icon: roomFacility[f]
+        }) 
+    });
+    req.session.roomInfo['room_facility'] = k;
 
     /**
      * Fetch error from requrest object
@@ -784,6 +815,9 @@ const postRoomEdit = async (req, res, next) => {
         });
 
     }
+  
+
+
     const isRoomUpdated = await gr.editRoom(req.session.roomInfo);
     if (isRoomUpdated) {
         delete req.session.roomInfo;
@@ -837,6 +871,66 @@ const ajaxGetRoom = async (req,res,next) => {
 
 
 }
+
+const ajaxGetRoomMates = async (req,res,next) =>{
+    try{
+        const p = new Person();
+        const gpPgUser = await p.getAllPgPerson();
+    
+        const person = [];
+        gpPgUser.length && gpPgUser.forEach(p =>{
+            person.push({
+                id: p.id,
+                fullName:p.fullName,
+                profile:p.profile_image,
+                city:p.city
+            });
+        })
+        
+    
+        return res.status(200).send(JSON.stringify({
+            success: true,
+            data: person,
+            errMessage: null
+        }));
+
+    }catch(e){
+        return res.status(500).send(JSON.stringify({
+            success: false,
+            data: null,
+            errMessage: "Server Error"
+        }));
+    }
+}
+
+const ajaxPostRoomMates = async (req,res,next) =>{
+    const {person,roomid} = req.body;
+    if(roomid && person){
+        const r = new Rooms();
+        let isAdded = await r.addRoomMate(roomid,person);
+        if(isAdded){
+            return res.status(200).send(JSON.stringify({
+                success: true,
+                data: isAdded.room_no,
+                errMessage: null
+            }));
+        }else{
+            return res.status(404).send(JSON.stringify({
+                success: false,
+                data: null,
+                errMessage: "Person not found"
+            }));    
+        }
+        
+    }else{
+        return res.status(404).send(JSON.stringify({
+            success: false,
+            data: null,
+            errMessage: "Person not found"
+        }));
+    }
+}
+
 module.exports = {
     getDashBoard,
     getAllPgPerson,
@@ -862,5 +956,7 @@ module.exports = {
     removeRoom,
     getRoomList,
     clearAllSessionData,
-    ajaxGetRoom
+    ajaxGetRoom,
+    ajaxGetRoomMates,
+    ajaxPostRoomMates
 }

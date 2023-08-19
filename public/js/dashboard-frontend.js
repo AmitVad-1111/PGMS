@@ -64,7 +64,6 @@ function callRemoveCta(msg) {
     const removeBtn = document.querySelectorAll("[data-remove]");
     removeBtn.length && removeBtn.forEach(rbtn => {
         rbtn.addEventListener("click", (e) => {
-            console.log(e.target.parentNode);
             Swal.fire({
                 title: msg,
                 icon: "question",
@@ -85,14 +84,15 @@ function callRemoveCta(msg) {
 
 
 const PopupObject = {
-    popupOverlay: document.querySelector("[data-model-overlay]"),
-    popupBox: document.querySelector("[data-model]"),
-    popupContent: document.querySelector("[data-model] [data-content]"),
-    closeBtn: document.querySelector("[data-model] .cursor-pointer"),
-    loader: document.querySelector("[data-model] [data-loader]"),
+    popupOverlay: null,
+    popupBox: null,
+    popupContent: null,
+    closeBtn: null,
+    loader: null,
     openPopup: function () {
         this.popupOverlay && this.popupOverlay.classList.remove("hidden");
         this.popupBox && this.popupBox.classList.remove("hidden");
+        this.bindCloseEvent();
     },
     showLoader: function (hide = false) {
         if (hide) {
@@ -237,7 +237,6 @@ const createPersonScript = () => {
                 })
             }
             const res = await sendRequest(url, option);
-            console.log(res)
             if (res.success) {
                 const currentPath = window.location.pathname.split("/");
                 showLoader(true);
@@ -318,10 +317,18 @@ const customTab = () => {
 
 const openInfoPopup = (elment) => {
     if (elment.length) {
+        const popupConfig = {
+            popupOverlay: document.querySelector(`[data-model-overlay="viewRoom"]`),
+            popupBox: document.querySelector(`[data-model="viewRoom"]`),
+            popupContent: document.querySelector(`[data-model="viewRoom"] [data-content]`),
+            closeBtn: document.querySelector(`[data-model="viewRoom"] .cursor-pointer`),
+            loader: document.querySelector(`[data-model="viewRoom"] [data-loader]`)
+        }
+        const viewRoomPopup = Object.assign({}, PopupObject, popupConfig);
         elment.forEach(el => {
             el.addEventListener("click", async function (e) {
                 let id = event.currentTarget.parentNode.querySelector(`[name="room_id"]`)?.value || 0;
-
+                
                 if (!id) {
                     Swal.fire({
                         title: "Room Not Found",
@@ -329,9 +336,10 @@ const openInfoPopup = (elment) => {
                     })
                 }
 
+                
                 //open popup
-                PopupObject.openPopup();
-                PopupObject.showLoader();
+                viewRoomPopup.openPopup();
+                viewRoomPopup.showLoader();
 
                 const url = window.location.origin + "/dashboard/getroom";
                 const option = {
@@ -346,20 +354,24 @@ const openInfoPopup = (elment) => {
                 };
                 const res = await sendRequest(url, option);
                 if (res.success) {
-                    console.log(res);
                     const roomD = res.data;
-                    PopupObject.showLoader(true);
+                    viewRoomPopup.showLoader(true);
 
-                    const avail_status = PopupObject.popupContent.querySelector(".avaibility");
-                    const full_status = PopupObject.popupContent.querySelector(".rfull");
+                    if(popupConfig.popupBox){
+                        popupConfig.popupBox.setAttribute("data-current-room",roomD.room_no);
+                    } 
 
-                    const profile = PopupObject.popupContent.querySelector(".room-image");
-                    const roomNo = PopupObject.popupContent.querySelector(".roomNo");
-                    const location = PopupObject.popupContent.querySelector(".location");
-                    const numSharing = PopupObject.popupContent.querySelector(".num_sharing");
+                    const avail_status = viewRoomPopup.popupContent.querySelector(".avaibility");
+                    const full_status = viewRoomPopup.popupContent.querySelector(".rfull");
+
+                    const profile = viewRoomPopup.popupContent.querySelector(".room-image");
+                    const roomNo = viewRoomPopup.popupContent.querySelector(".roomNo");
+                    const location = viewRoomPopup.popupContent.querySelector(".location");
+                    const numSharing = viewRoomPopup.popupContent.querySelector(".num_sharing");
+                    const facility = viewRoomPopup.popupContent.querySelector(".room-facility");
 
                     //check for availability
-                    const roomMates = PopupObject.popupContent.querySelector(".room_mates");
+                    const roomMates = viewRoomPopup.popupContent.querySelector(".room_mates");
                     if (roomD.room_mates.length > 0) {
                         if (roomD.room_mates.length < roomD.num_sharing) {
                             avail_status.classList.remove("hidden")
@@ -369,7 +381,7 @@ const openInfoPopup = (elment) => {
                             full_status.classList.remove("hidden")
                         }
 
-                        
+
                         let h = '';
                         roomD.room_mates.forEach(pd => {
                             h += `
@@ -385,18 +397,18 @@ const openInfoPopup = (elment) => {
                             `
                         });
 
-                       if(roomMates){
-                        roomMates.innerHTML = h;
-                        roomMates.parentNode.style.display = "block";
-                       } 
+                        if (roomMates) {
+                            roomMates.innerHTML = h;
+                            roomMates.parentNode.style.display = "block";
+                        }
 
                     } else {
                         avail_status.classList.remove("hidden");
                         full_status.classList.add("hidden");
-                        if(roomMates){
+                        if (roomMates) {
                             roomMates.innerHTML = '';
                             roomMates.parentNode.style.display = "none";
-                        } 
+                        }
                     }
 
                     profile.setAttribute("src", `/images/uploads${roomD.room_image}`)
@@ -406,26 +418,150 @@ const openInfoPopup = (elment) => {
                     location.innerHTML = roomD.room_location;
                     numSharing.innerHTML = roomD.num_sharing;
 
-                    // roomD.room_facility.length && roomD.room_facility.forEach(f => {
-                    //     const fc = PopupObject.popupContent.querySelector(`[data-${f.replaceAll(" ","-")}]`);
-                    //     fc && fc.classList.add("processed");
+                    let faciIcons = '';
+                    roomD.room_facility.length && roomD.room_facility.forEach(f => {
+                        faciIcons += `<img src="${f.facility_icon}" alt="${f.facility_title}" title="${f.facility_title.toUpperCase()}" class="pr-2 facility">`;
+                    });
+                    facility.innerHTML = faciIcons;
 
-                    // })
-                    // const not_processed = PopupObject.popupContent.querySelectorAll(`.facility:not(.processed)`); 
-                    // not_processed.length && no
-
-                    PopupObject.showConent();
+                    viewRoomPopup.showConent();
 
                 } else {
-                    PopupObject.showLoader(true);
-                    PopupObject.hideConent();
+                    viewRoomPopup.showLoader(true);
+                    viewRoomPopup.hideConent();
                 }
             });
 
         });
+    }
+}
 
-        //bind popup close event
-        PopupObject.bindCloseEvent();
+function openSelectRoomeePopup() {
+    const popupConfig = {
+        popupOverlay: document.querySelector(`[data-model-overlay="roomMate"]`),
+        popupBox: document.querySelector(`[data-model="roomMate"]`),
+        popupContent: document.querySelector(`[data-model="roomMate"] [data-content]`),
+        closeBtn: document.querySelector(`[data-model="roomMate"] .cursor-pointer`),
+        loader: document.querySelector(`[data-model="roomMate"] [data-loader]`)
+    }
+
+    const roomMatePopup = Object.assign({}, PopupObject, popupConfig);
+    const roomMateEl = document.querySelector("[data-add-roommate]");
+    const allPerson = document.querySelector("[data-all-person]");
+    const personArr = [];
+    const getHtml = (arr) => {
+        let html = '';
+        if (arr.length) {
+            arr.forEach(p => {
+                html += `
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex items-center">
+                        <div class="relative w-8 h-8 mr-3 rounded-full md:block">
+                            <img class="object-cover w-full h-full rounded-full"
+                            src="/images/uploads${p.profile}"
+                            alt="${p.fullName}" loading="lazy" />
+                            <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
+                        </div>
+                        <div>
+                            <p class="font-semibold">${p.fullName}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">${p.city}</p>
+                        </div>
+                        </div>
+                        <div data-person="${p.id}" class="bg-purple-700 px-4 py-1 text-white cursor-pointer hover:bg-purple-600">Select</div>
+                    </div>
+                `
+            });
+        }
+        return html;
+    }
+    const bindSelectEvent = () => {
+        const selectBtn = allPerson.querySelectorAll(`[data-person]`);
+        if (selectBtn.length) {
+            selectBtn.forEach(btn => {
+                btn.addEventListener("click", async (e) => {
+                    const currentBtn = e.currentTarget;
+                    const pid = e.currentTarget.dataset.person;
+                    const rid = document.querySelector(`[data-current-room]`).dataset?.currentRoom;
+                    const url = window.location.origin + "/dashboard/postRoomMates";
+                    const option = {
+                        method: "POST",
+                        headers: {
+                            "content-type": "application/json",
+                            "accept": "application/json"
+                        },
+                        body: JSON.stringify({
+                            person:pid || 0,
+                            roomid: rid || 0
+                        })
+                    };
+                    const res = await sendRequest(url, option);
+                    if(res.success){
+                        currentBtn.innerHTML = "Added";
+                    }else{
+                        console.log(res);
+                    }
+                });
+            })
+        }
+    }
+    if (roomMateEl) {
+        roomMateEl.addEventListener("click", async function () {
+            roomMatePopup.openPopup()
+            roomMatePopup.showConent();
+
+            const url = window.location.origin + "/dashboard/getRoomMates";
+            const option = {
+                method: "GET",
+                headers: {
+                    "content-type": "application/json",
+                    "accept": "application/json"
+                }
+            };
+            const res = await sendRequest(url, option);
+            if (res.success) {
+                console.log(res);
+                personArr.push(...res.data);
+                console.log(personArr);
+
+                if (res.data.length) {
+                    allPerson.innerHTML = getHtml(res.data);
+                    bindSelectEvent();
+                } else {
+                    allPerson.innerHTML = `<div class="font-semibold text-sm text-gray-600">No pg person added yet</div>`;
+                }
+            } else {
+
+            }
+
+            const textBox = roomMatePopup.popupContent.querySelector(`input[type="text"]`);
+            console.log(textBox);
+            if (textBox) {
+                textBox.addEventListener("keyup", async (e) => {
+                    const srchqry = e.target.value?.trim();
+                    console.log(srchqry);
+                    if (srchqry.length >= 3) {
+                        if (personArr.length) {
+                            const d = personArr.filter(s => {
+                                return s.fullName.toLowerCase().includes(srchqry.toLowerCase());
+                            });
+
+                            if (d.length) {
+                                allPerson.innerHTML = getHtml(d);
+                            } else {
+                                allPerson.innerHTML = getHtml(personArr);
+                            }
+                            bindSelectEvent();
+                        }
+                    } else {
+                        if (personArr.length) {
+                            allPerson.innerHTML = getHtml(personArr);
+                            bindSelectEvent();
+                        }
+                    }
+                })
+            }
+
+        })
     }
 }
 
@@ -448,6 +584,7 @@ function main() {
         "/dashboard/rooms": () => {
             callRemoveCta('Do you want to delete this room?');
             openInfoPopup(document.querySelectorAll("[data-infoPopup]"));
+            openSelectRoomeePopup()
         },
 
     }

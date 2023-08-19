@@ -17,10 +17,10 @@ const RoomSchema = mongoose.Schema({
     type:String,
     require:true
   },
-  room_facility:{
-    type: Array,
-    default:[],
-  },
+  room_facility:[{
+    facility_title: {type: String},
+    facility_icon: {type: String}
+  }],
   room_mates:[
     {type:objectId ,ref:"pg_user"}
   ],
